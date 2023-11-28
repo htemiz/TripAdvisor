@@ -20,18 +20,15 @@
 # from selenium.webdriver.support.ui import WebDriverWait
 # from selenium.webdriver.support import expected_conditions as EC
 # from selenium.webdriver.chrome.options import Options
-# from selenium.webdriver.common.action_chains import ActionChains
-# from selenium.webdriver.common.touch_actions import TouchActions
+
 # from selenium.webdriver.support.select import Select
 
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 import pandas as pd
-from utils import *
+from utils.utils import *
 import gc
-from os import getcwd, listdir, makedirs
-from os.path import join, abspath, basename, dirname, exists
+
 
 
 sleep_min = 2.5
@@ -40,115 +37,6 @@ wait_time = 3.5
 
 width, height = 1250, 1000
 
-def find_next_button(driver):
-
-    # div = driver.find_element_by_class_name("prw_common_standard_pagination_resp")
-    try:
-        btnNext = driver.find_element(By.XPATH, '//div[@data-trackingstring="pagination_h"]//a[text()="Next"]')
-
-    except:
-        return None
-
-    return btnNext
-
-
-def yorum_olmayanlari_yaz(hotel_id, root_folder=getcwd()):
-
-    with open(join(root_folder, 'Yorum bulunamayan oteller.txt'), 'a', encoding='utf8') as f:
-        f.writelines(str(hotel_id) + "\n")
-
-
-def save_data(df_hotel, df_review, file_hotel, file_yorum, root_folder= getcwd()):
-    if df_hotel is not None:
-        if exists(join(root_folder,file_hotel)):
-            df_saved_hotel = pd.read_feather(join(root_folder, file_hotel))
-            df_saved_hotel = pd.concat([df_saved_hotel, df_hotel], ignore_index=True, sort=False)
-        else:
-            df_saved_hotel = df_hotel
-
-        try:
-            df_saved_hotel.reset_index(inplace=True, drop=True)
-            print("Otel bilgileri kayıt ediliyor... ", end='')
-            df_saved_hotel.to_feather(join(root_folder, file_hotel))
-            print("Başarılı!")
-
-            df_saved_hotel = None
-        except Exception as e:
-            print("Otel bilgileri Feather dosyasını yazarken hata ile karşılaşıldı")
-            print(e)
-
-    if df_review is not None:
-        if exists(join(root_folder, file_yorum)):
-            df_saved_yorum = pd.read_feather(join(root_folder, file_yorum))
-            df_saved_yorum = pd.concat([df_saved_yorum, df_review], ignore_index=True, sort=False)
-        else:
-            df_saved_yorum = df_review
-
-        try:
-            df_saved_yorum.reset_index(inplace=True, drop=True)
-            print("Yorum bilgileri kayıt ediliyor... ", end='')
-            df_saved_yorum.to_feather(join(root_folder, file_yorum))
-            print("Başarılı!")
-
-            df_saved_yorum = None
-        except Exception as e:
-            print("Yorum bilgileri Feather dosyasını yazarken hata ile karşılaşıldı")
-            print(e)
-
-    gc.collect()
-    sleep(1)
-
-
-def write_last_index(index, root_folder=getcwd()):
-    with open(join(root_folder, 'last_index.txt'), "w") as f:
-        f.writelines(str(index))
-
-
-def get_element(driver, name, by='class'):
-    found = False
-    element = None
-    try:
-        if by =='class':
-            element = driver.find_element(By.CLASS_NAME, name)
-        elif by =='id':
-                element = driver.find_element(By.ID, name)
-        found = True
-        return element
-
-    except:
-        if found:
-            return element
-
-        return None
-
-
-def click_accept_button(driver):
-    # print('Accept buton içindeyiz')
-
-    try:
-        #btn_accept = driver.find_element_by_id( 'onetrust-accept-btn-handler')
-
-        btn_accept = driver.find_element(By.XPATH, "//button[@id='onetrust-accept-btn-handler']")
-
-        if btn_accept is not None:
-            btn_accept.click()
-    except:
-        pass
-
-
-
-def click_and_press_esc(driver):
-
-    try:
-        btn_accept = driver.find_element(By.ID, '_evidon-accept-button')
-        if btn_accept is not None:
-            btn_accept.click()
-
-    except:
-        pass
-
-    webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-    webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
 
 
 def parse_about(data, driver, ):
@@ -237,6 +125,8 @@ def puan_balonlari_al(data, r):
     except:
         print("Kullanıcı puanı alınamadı")
         pass
+
+
 
 
 def yorum_basligini_al(data, r):
@@ -385,26 +275,6 @@ def resimleri_al(driver, data, r, rCount):
         pass
 
 
-def move_mouse_to_mid_window(driver):
-    try:
-        win_rect = driver.get_window_rect()
-        x = win_rect['x'] + win_rect['width'] / 2
-        y = win_rect['y'] + win_rect['height'] / 2
-        pgui.moveTo(x, y)
-    except Exception as e:
-        print("move_mouse_to_mid_window fonksiyonunda bir hata ile karşılaşıldı. Hata şu:\n", e)
-        pass
-    # diğer yol
-    # import ctypes
-    # ctypes.windll.user32.SetCursorPos(x, y) # move mouse to
-    ## bunlar diğer örnekler
-    # https://learn.microsoft.com/tr-tr/windows/win32/api/winuser/nf-winuser-mouse_event?redirectedfrom=MSDN
-    # ctypes.windll.user32.mouse_event(2, 0, 0, 0, 0)  # left down
-    # ctypes.windll.user32.mouse_event(4, 0, 0, 0, 0)  # left up
-
-    # browser pencerenin başladığı piksel (y değeri)
-    # driver.execute_script('return window.outerHeight - window.innerHeight;')
-
 
 def dil_secenekleri_divini_ver(driver, url ):
     """
@@ -492,14 +362,6 @@ def dilleri_listele(driver, div_diller, ul_diller ):
         sleep_a_while(sleep_min=sleep_min, sleep_max=sleep_max)  # better to sleep a while
         return text_diller_listesi
 
-
-def hosgeldiniz_penceresini_kapat(driver):
-    try:
-        div = driver.find_element(By.CLASS_NAME, 'GLTFe')
-        if div is not None:
-            click_and_press_esc(driver)
-    except:
-        pass
 
 
 def read_more_butonuna_bas(driver):
@@ -753,18 +615,6 @@ def parse_reviews(driver, hotel_id, url):
         return df
     else:
         return None
-
-
-def otel_sayfasini_ac(driver, url):
-    driver.get(url)
-    driver.implicitly_wait(3)
-    sleep_a_while(sleep_min=sleep_min , sleep_max=sleep_max )  # better to sleep a while
-
-    click_accept_button(driver)
-    driver.implicitly_wait(1)
-    sleep_a_while(sleep_min=sleep_min , sleep_max=sleep_max )  # better to sleep a while
-
-    click_and_press_esc(driver)
 
 
 def get_hotel_information(region_id, hotel_id, driver, url):

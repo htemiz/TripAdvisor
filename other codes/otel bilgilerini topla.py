@@ -1,35 +1,9 @@
 import re
 import codecs
-from lxml import html
-import requests
 import csv
-from typing import List, Any
-from bs4 import BeautifulSoup
-import urllib.request as request
-from contextlib import closing
-from time import sleep
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.touch_actions import TouchActions
-from selenium.webdriver.support.select import Select
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.touch_actions import TouchActions
-from selenium.webdriver.support.select import Select
-from os.path import join, abspath, dirname, basename, exists
-from os import makedirs
 
-from utils import *
+from utils.utils import *
 
 
 user_agent_02 = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"

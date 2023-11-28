@@ -470,7 +470,7 @@ def find_next_button(driver):
 
 def yorum_olmayanlari_yaz(hotel_id, root_folder=getcwd()):
 
-    with open(join(root_folder, 'Yorum bulunamayan oteller.txt'), 'a', encoding='utf8') as f:
+    with open(join(root_folder, '../Yorum bulunamayan oteller.txt'), 'a', encoding='utf8') as f:
         f.writelines(str(hotel_id) + "\n")
 
 
