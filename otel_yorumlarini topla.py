@@ -32,7 +32,6 @@ from utils import *
 import gc
 from os import getcwd, listdir, makedirs
 from os.path import join, abspath, basename, dirname, exists
-import pyautogui as pgui
 
 
 sleep_min = 2.5
@@ -383,20 +382,6 @@ def resimleri_al(driver, data, r, rCount):
                 cnt += 1
 
     except:
-        pass
-
-
-def move_mouse_to_element(driver, element):
-    try:
-        win_rect = driver.get_window_rect()
-        # x = win_rect['x'] + win_rect['width'] / 2
-        # y = win_rect['y'] + win_rect['height'] / 2
-
-        x = win_rect['x'] + element.location['x'] + 100
-        y = win_rect['y'] + element.location['y']
-        pgui.moveTo(x, y)
-    except Exception as e:
-        print("Mouse'u elemana taşırken bir hata ile karşılaşıldı. Hata şu:\n", e)
         pass
 
 
