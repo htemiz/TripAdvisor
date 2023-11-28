@@ -4,10 +4,10 @@ from selenium.webdriver.chrome.service import Service
 import pyautogui as pgui
 from os import getcwd
 from os.path import join, exists
-
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.touch_actions import TouchActions
-
+import pandas as pd
+from selenium.webdriver.common.by import By
+import gc
+from selenium.webdriver.common.keys import Keys
 
 
 sleep_min = .15
@@ -16,9 +16,7 @@ slp_factor = 15
 slp_small_factor = 7.5
 
 
-
 def click_accept_button(driver):
-    # print('Accept buton içindeyiz')
 
     try:
         #btn_accept = driver.find_element_by_id( 'onetrust-accept-btn-handler')
@@ -29,7 +27,6 @@ def click_accept_button(driver):
             btn_accept.click()
     except:
         pass
-
 
 
 def click_and_press_esc(driver):
@@ -46,16 +43,12 @@ def click_and_press_esc(driver):
     webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
 
 
-
 def find_next_button(driver):
 
-    # div = driver.find_element_by_class_name("prw_common_standard_pagination_resp")
     try:
         btnNext = driver.find_element(By.XPATH, '//div[@data-trackingstring="pagination_h"]//a[text()="Next"]')
-
     except:
         return None
-
     return btnNext
 
 
