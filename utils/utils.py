@@ -112,7 +112,6 @@ def move_mouse_to_element(driver, element):
         pass
 
 
-
 def move_mouse_to_mid_window(driver):
     try:
         win_rect = driver.get_window_rect()
@@ -155,7 +154,6 @@ def otel_sayfasini_ac(driver, url):
     click_accept_button(driver)
     driver.implicitly_wait(1)
     sleep_a_while(sleep_min=sleep_min , sleep_max=sleep_max )  # better to sleep a while
-
     click_and_press_esc(driver)
 
 
@@ -209,6 +207,7 @@ def save_data(df_hotel, df_review, file_hotel, file_yorum, root_folder= getcwd()
 
     gc.collect()
     sleep(1)
+
 
 def write_last_index(index, root_folder=getcwd()):
     with open(join(root_folder, 'last_index.txt'), "w") as f:
