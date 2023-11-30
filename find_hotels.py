@@ -1,33 +1,11 @@
 import re
 import codecs
-from lxml import html
-import requests
 import csv
-from typing import List, Any
-from bs4 import BeautifulSoup
-import urllib.request as request
-from contextlib import closing
-from time import sleep
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.touch_actions import TouchActions
-from selenium.webdriver.support.select import Select
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.touch_actions import TouchActions
-from selenium.webdriver.support.select import Select
 
-chromedriver_path = r"D:\programlar\chromedriver 93.exe"
+from utils.utils import *
+
+
 user_agent_02 = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
 
 headers_01 = {'User-Agent': user_agent_02,
@@ -54,12 +32,160 @@ headers_03 = {
 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36'
 }
 
+region_urs = "https://www.tripadvisor.com.tr/Hotels-g28930-Florida-Hotels.html"
+region_id ="28930"
+chromedriver_path = "crawler/chromedriver.exe"
+download_dir = "data"
+def get_hotel_ids(region_id, star=None, driver=None,  sleep_min=0.05, sleep_max=0.1 ):
+
+    if driver is None:
+        driver = get_browser(chromedriver_path, download_dir)
+
+    baseurl = 'https://www.tripadvisor.com/Hotels-g' + region_id
+    #baseurl2 = 'https://www.tripadvisor.com/Hotel_Review-g'
+    ids = list()
+
+    oastep = 30
+    citypage = 0
+    otelIDre = re.compile(r'property_([0-9]+)',  re.M | re.S)
+    bolgekodure = re.compile(r'g([0-9]+)')
+    otelkodure = re.compile(r'd([0-9]+)')
+    #otelyildizire = re.compile(r'class="ui_star_rating star_[0-9]', re.M)
+    #otelyildizi = ""
+
+    i = 0
+    total = None
 
 
-chromedriver_path = r"D:\programlar\chromedriver 93.exe"
-download_dir =  r"d:\calisma\projeler\tripadvisor\download_albums"
-driver = get_browser(chromedriver_path, download_dir)
+    while True:
+        if star is not None:
+            strYildiz = '-zfc%s' % star
+        else:
+            strYildiz = ''
 
+        if citypage == 0:
+            cityurl = '%s' % baseurl + strYildiz
+        else:
+            cityurl = '%s-oa%s' % (baseurl, citypage * oastep) + strYildiz
+
+        driver.get(cityurl)
+
+        sleep_a_while(sleep_min=sleep_min, sleep_max=sleep_max)  # better to sleep a while
+
+        try:
+            btn_accept = driver.find_element_by_id('_evidon-accept-button')
+            if btn_accept is not None:
+                btn_accept.click()
+        except:
+            pass
+
+        htmlpage = driver.page_source
+
+        if total is None:
+            count = driver.find_element_by_class_name("eMoHQ").text.split(" ")[0]
+            total = int(count.replace(',',''))
+
+        [ids.append(x) for x in re.findall(otelIDre, str(htmlpage))]
+
+
+        if citypage * oastep >= total:
+            break
+
+        citypage += 1
+        sleep_a_while(sleep_min=sleep_min, sleep_max=sleep_max)  # better to sleep a while
+
+    ids = list(set(ids))
+
+    return ids
+
+
+def find_next_button(driver):
+
+    # div = driver.find_element_by_class_name("prw_common_standard_pagination_resp")
+    try:
+        btnNext = driver.find_element_by_xpath('//div[@data-trackingstring="pagination_h"]//a[text()="Next"]')
+
+    except:
+        return None
+
+    return btnNext
+
+
+def get_hotel_ids_with_next_button(region_id, star=None, driver=None,  sleep_min=3, sleep_max=3 ):
+
+    if driver is None:
+        chromedriver_path = r"D:\programlar\chromedriver 95.exe"
+        driver = get_browser(chromedriver_path, download_dir)
+
+    baseurl = 'https://www.tripadvisor.com/Hotels-g' + region_id
+    #baseurl2 = 'https://www.tripadvisor.com/Hotel_Review-g'
+    ids = list()
+
+    oastep = 30
+    citypage = 0
+    otelIDre = re.compile(r'property_([0-9]+)',  re.M | re.S)
+    bolgekodure = re.compile(r'g([0-9]+)')
+    otelkodure = re.compile(r'd([0-9]+)')
+    #otelyildizire = re.compile(r'class="ui_star_rating star_[0-9]', re.M)
+    #otelyildizi = ""
+
+    i = 0
+    total = None
+
+    while True:
+        if star is not None:
+            strYildiz = '-zfc%s' % star
+        else:
+            strYildiz = ''
+
+        if citypage == 0:
+            cityurl = '%s' % baseurl + strYildiz
+        else:
+            cityurl = '%s-oa%s' % (baseurl, citypage * oastep) + strYildiz
+
+        driver.get(cityurl)
+
+        sleep_a_while(sleep_min=sleep_min, sleep_max=sleep_max)  # better to sleep a while
+
+        click_accept_button(driver)
+        click_and_press_esc(driver)
+
+
+        try:
+            btn_accept = driver.find_element_by_id('_evidon-accept-button')
+            if btn_accept is not None:
+                btn_accept.click()
+        except:
+            pass
+
+        webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+        webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+
+        htmlpage = driver.page_source
+
+        if total is None:
+            count = driver.find_element_by_class_name("eMoHQ").text.split(" ")[0]
+            total = int(count.replace(',',''))
+            print("total ", total)
+
+        [ids.append(x) for x in re.findall(otelIDre, str(htmlpage))]
+
+        btnNext = find_next_button(driver)
+
+        citypage +=1
+
+        if btnNext is not None and btnNext.text == "Next":
+            btnNext.click()
+        else:
+            break
+
+        sleep_a_while(sleep_min=sleep_min, sleep_max=sleep_max)  # better to sleep a while
+
+
+
+    ids = list(set(ids))
+
+    return ids
 
 
 def main():
@@ -69,76 +195,19 @@ def main():
     sehir_ve_ID = {"Istanbul": 293974, "Belek": 312725, 'Girit': 189413,
                    "Mayorka": 187462, 'Antalya': 297962}
 
-    baseurl = 'https://www.tripadvisor.com/Hotels-g' + \
-        str(sehir_ve_ID[sehir])
-    #baseurl2 = 'https://www.tripadvisor.com/Hotel_Review-g'
 
-    oastep = 30
-    citypage = 0
-    otelIDre = re.compile(r'property_([0-9]+)',  re.M | re.S)
-    bolgekodure = re.compile(r'g([0-9]+)')
-    otelkodure = re.compile(r'd([0-9]+)')
-    #otelyildizire = re.compile(r'class="ui_star_rating star_[0-9]', re.M)
-    #otelyildizi = ""
+
+    driver = get_browser(chromedriver_path, download_dir)
+
+    # region_id = str(sehir_ve_ID[sehir])
+
+
+    ids = get_hotel_ids_with_next_button(region_id, star=5, driver=driver,  sleep_min=3, sleep_max=4 )
+
+    print(len(ids))
+
     with codecs.open('d:/' + sehir + '_oteller.csv', 'w', encoding='utf8') as cikti:
-        yazici = csv.writer(cikti, lineterminator="\n")
+        yazici = csv.writer(cikti, )
+        for x in list(ids):
+            yazici.writerow([x])
 
-        i = 0
-
-        while True:
-            if otelyildizi is not None:
-                strYildiz = '-zfc%s' % otelyildizi
-            else:
-                strYildiz = ''
-
-            if citypage == 0:
-                cityurl = '%s' % baseurl + strYildiz
-            else:
-                cityurl = '%s-oa%s' % (baseurl, citypage * oastep) + strYildiz
-
-            s = requests.Session()
-            s.headers.update(headers_01)
-            htmlpage = requests.get(cityurl)
-            sleep(0.05)
-
-            for otelID in re.findall(otelIDre, str(htmlpage.content)):
-                i += 1
-                tree = html.fromstring(htmlpage.content)
-
-                otelismi = tree.xpath(
-                    '//[@id="property_' + otelID + '"]/text()')
-
-
-                otelyildizi = tree.xpath(
-                    '//[svg[@class="TkRkB"]]')
-
-                kodlar = tree.xpath('//*[@id="property_' + otelID + '"]/@href')
-                bolgekodu = re.search(bolgekodure, str(kodlar)).group().strip('g')
-                otelkodu = re.search(otelkodure, str(kodlar)).group().strip('d')
-
-                # kısayol kapa=ctrl+k+c, aç=ctrl+k+u
-                # baseurlget = baseurl2 + bolgekodu + '-d' + otelkodu
-                # otelpage = requests.get(baseurlget)
-
-                # if re.search(otelyildizire, str(otelpage.content)) is not None:
-                #     otelyildizi = re.search(otelyildizire, str(otelpage.content)).group()
-                #     otelyildizi = re.search('[0-9]', otelyildizi).group()
-                # else:
-                #     otelyildizi = None
-                # i += 1
-                # print(str('{}. otel için otel yildiz degeri:{}'.format(i, otelyildizi)))
-                yorumYaz: List[Any] = ["Antalya", bolgekodu,
-                                       otelkodu, otelismi, otelyildizi]
-                yazici.writerow(yorumYaz)
-                print("{}. otel indirildi".format(i))
-                #baseurlget = baseurl2
-            citypage += 1
-            if citypage == 2:
-                print("bitti")
-                break
-
-main()
-
-
-if __name__ == '__main__':
-    main()

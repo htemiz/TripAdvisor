@@ -666,8 +666,8 @@ def get_hotel_information(region_id, hotel_id, driver, url):
 
 
 # chromedriver_path = r"D:\Software\chromedriver.exe"
-chromedriver_path = r"D:\programlar\chromedriver.exe"
-download_dir = r"D:\calisma\projeler\tripadvisor\data"
+chromedriver_path = "crawler/chromedriver.exe"
+download_dir = "data"
 
 def main():
 
