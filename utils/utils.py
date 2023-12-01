@@ -20,12 +20,11 @@ def click_accept_button(driver):
 
     try:
         #btn_accept = driver.find_element_by_id( 'onetrust-accept-btn-handler')
-
         btn_accept = driver.find_element(By.XPATH, "//button[@id='onetrust-accept-btn-handler']")
 
         if btn_accept is not None:
             btn_accept.click()
-    except:
+    except Exception as e:
         pass
 
 
@@ -35,13 +34,14 @@ def click_and_press_esc(driver):
         btn_accept = driver.find_element(By.ID, '_evidon-accept-button')
         if btn_accept is not None:
             btn_accept.click()
-
     except:
         pass
 
-    webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-    webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-
+    try:
+        webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+        webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+    except:
+        pass
 
 def find_next_button(driver):
 
@@ -132,6 +132,12 @@ def move_mouse_to_mid_window(driver):
     # browser pencerenin başladığı piksel (y değeri)
     # driver.execute_script('return window.outerHeight - window.innerHeight;')
 
+def get_region_id_and_name_from_url(url_and_name):
+    """give region id and hotel id from given hotel url"""
+    t = url_and_name[0].split('-g')[-1].split('-')[0:2]
+    region = t[0]
+    id = t[1].replace('d','')
+    return region, id, url_and_name[1]
 
 def parse_img_url(url):
 
