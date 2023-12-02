@@ -28,11 +28,12 @@ from selenium.webdriver.common.by import By
 import pandas as pd
 from utils.utils import *
 import gc
+from os.path import abspath, join
+from sys import argv
 
 
-
-sleep_min = 2.5
-sleep_max = 5
+sleep_min = 1.5
+sleep_max = 3
 wait_time = 3.5
 
 width, height = 1250, 1000
@@ -367,6 +368,9 @@ def dilleri_listele(driver, div_diller, ul_diller ):
 def read_more_butonuna_bas(driver):
     # read more butonuna basalım ki tüm yorumların textlerinin tamamı görünür olsu.
     # bu butonların birine tıklamak yeterli
+    click_and_press_esc(driver)
+    click_and_press_esc(driver)
+
     try:
         read_more = driver.find_element(By.CLASS_NAME,'Ignyf')
         if read_more is not None:
@@ -384,7 +388,7 @@ def read_more_butonuna_bas(driver):
         except:
             # print("Hiç Bir Yorum Bilgisi Bulunamadı: otelID:", hotel_id)
             # yorum_olmayanlari_yaz(hotel_id, download_dir
-            print("Read More butonu bulunamadı")
+            # print("Read More butonu bulunamadı")
             pass
 
 
@@ -601,7 +605,6 @@ def parse_reviews(driver, hotel_id, url):
                         break
                         pass
 
-
             except Exception as e:
                 print("Yorumlar bulunamadı.")
                 print('\nHata şuydu:', e, "\n\n")
@@ -622,8 +625,6 @@ def get_hotel_information(region_id, hotel_id, driver, url):
 
     otel_sayfasini_ac(driver, url)
     # sleep_a_while(sleep_min=sleep_min / 2, sleep_max=sleep_max / 2)  # better to sleep a while
-
-    # click_accept_button(driver)
 
     hotel_data['RegionID'] = region_id
     hotel_data['HotelID'] = hotel_id
@@ -661,16 +662,13 @@ def get_hotel_information(region_id, hotel_id, driver, url):
     # with codecs.open('d:/' + 'Istanbul' + '_oteller_bilgileri.txt', 'a', encoding='utf8') as cikti:
     #     yazici = csv.DictWriter(cikti, hotel_data.keys() )
     #     yazici.writerow(hotel_data)
-
     return hotel_data
 
 
 # chromedriver_path = r"D:\Software\chromedriver.exe"
 chromedriver_path = "crawler/chromedriver.exe"
-download_dir = "data"
 
-def main():
-
+"""
     sehir_ve_ID = {"London":186338, "NewYork":60763, "Paris":187147, "Tokyo":298184, "Beijing":294212,
                    "Istanbul": 293974, "Belek": 312725, 'Girit': 189413,
                    "Mayorka": 187462, 'Antalya': 297962}
@@ -679,97 +677,105 @@ def main():
 
     sehirler =('London', 'NewYork', 'Paris', 'Tokyo', 'Beijing')
     sehirler =('Antalya',)
+    
+    r"D:\calisma\projeler\tripadvisor\data\Antalya\Antalya_oteller.csv"
+"""
 
-    for sehir in sehirler:
+def main(data, region_name, download_dir ):
 
-        # csv_file= r"D:\calisma\projeler\tripadvisor\data\\" + sehir + "_oteller.csv"
-        csv_file= r"D:\calisma\projeler\tripadvisor\data\Antalya\Antalya_oteller.csv"
+    url_root = "https://www.tripadvisor.com.tr/Hotel_Review-g"
 
-        first = True
-        df_review = df_hotel = None
-        file_hotel = sehir + '_otel_bilgileri_agustos_23.feather'
-        file_yorum = sehir + '_yorum_bilgileri_agustos_23.feather'
-        n_periyot = 1
+    if download_dir is None:
+        download_dir = abspath(join("../data/", region_name))
+    else:
+        download_dir = abspath(join(download_dir, region_name))
 
-        url_root = "https://www.tripadvisor.com.tr/Hotel_Review-g"
+    file_hotel = join(download_dir, region_name + "_hotels.feather")
+    file_yorum = join(download_dir, region_name + "reviews.feather")
+    first = True
+    df_review = df_hotel = None
+    n_periyot = 1
 
-        # driver = get_browser(chromedriver_path, download_dir)
-        # driver.set_window_size(1400,1000)
-        # driver.maximize_window()
-        # driver.minimize_window()
+    ntotal= len(data)
+    # last_index = hotelIDs.index(kalinan) # kalinan index
+    last_index = 2000
+    count =  last_index
 
-        region_id = str(sehir_ve_ID[sehir])
-        hotelIDs = pd.read_csv(csv_file, header=None)
-        hotelIDs= hotelIDs.iloc[:,0].tolist()
+    for count in range(last_index, len(data)):#[hotelIDs[x] for x in [1,38, 39]]:
+        # id= 507978# 507977
+        print('#%d/%d' % (count +1, ntotal), end=',  ')
 
-        ntotal= len(hotelIDs)
-        # last_index = hotelIDs.index(kalinan) # kalinan index
-        last_index = 221
-        count =  last_index + 1
+        region_id = data.iloc[count].RegionID
+        hotel_id = data.iloc[count].HotelID
 
-        for id in hotelIDs[last_index:270]:#[hotelIDs[x] for x in [1,38, 39]]:
-            # id= 507978# 507977
-            print('#%d/%d' % (count, ntotal), end=',  ')
+        url = url_root + str(region_id) + "-d" + str(hotel_id)
 
-            url = url_root + str(region_id) + "-d" + str(id)
+        driver = get_browser(chromedriver_path, download_dir)
+        driver.set_window_size(width, height)
 
-            driver = get_browser(chromedriver_path, download_dir)
-            driver.set_window_size(width, height)
+        hotel_data = get_hotel_information(region_id, hotel_id, driver, url)
 
-            hotel_data = get_hotel_information(region_id, id, driver, url)
+        #hotel_data None ise, bu id de bir otel yok demektir. sonraki otele eç
+        if hotel_data is None:
+            print("Bu ID'ye (", str(id), ") sahip bir otel yok! Geçiliyor...\n")
+            sleep(.2)
+            write_last_index(count, download_dir)
+            continue
 
-            #hotel_data None ise, bu id de bir otel yok demektir. sonraki otele eç
-            if hotel_data is None:
-                print("Bu ID'ye (", str(id), ") sahip bir otel yok! Geçiliyor...\n")
-                count += 1
-                sleep(.2)
-                write_last_index(count - 1, download_dir)
-                continue
+        reviews = parse_reviews(driver, hotel_id, url)
+        sleep(.5)
 
-            reviews = parse_reviews(driver, id, url)
-            sleep(.5)
+        if first:
+            df_hotel = pd.DataFrame.from_records(hotel_data, columns=hotel_data.keys(), index=[0])
+            if reviews is not None:
+                df_review = reviews
+            first = False
 
-            if first:
-                df_hotel = pd.DataFrame.from_records(hotel_data, columns=hotel_data.keys(), index=[0])
-                if reviews is not None:
+        else:
+            df_hotel = df_hotel.append( hotel_data, ignore_index=True)
+
+            if reviews is not None:
+                if df_review is not None:
+                    df_review = pd.concat([df_review, reviews], ignore_index=True, sort=False)
+                else:
                     df_review = reviews
-                first = False
 
-            else:
-                df_hotel = df_hotel.append( hotel_data, ignore_index=True)
-
-                if reviews is not None:
-                    if df_review is not None:
-                        df_review = pd.concat([df_review, reviews], ignore_index=True, sort=False)
-                    else:
-                        df_review = reviews
-
-            if count % n_periyot == 0:  # her n_periyot adet otelde bir kayıt yap
-                driver.close()
-                sleep(.5)
-                save_data(df_hotel, df_review, file_hotel, file_yorum, download_dir)
-
-                first = True
-                df_hotel = None
-                df_review = None
-
-                gc.collect()
-                # sleep(1)
-                # driver = get_browser(chromedriver_path, download_dir)
-                # driver.set_window_size(1400, 1000)
-                # sleep(1)
-
-                # driver.maximize_window()
-                # driver.minimize_window()
-
-            write_last_index(count -1, download_dir)
-
-            count +=1
+        if count % n_periyot == 0:  # her n_periyot adet otelde bir kayıt yap
+            driver.close()
             sleep(.5)
+            write_or_append_data(df_hotel, file_hotel)
+            write_or_append_data(df_review, file_yorum)
 
-        save_data(df_hotel, df_review, file_hotel, file_yorum, download_dir)
+            first = True
+            df_hotel = None
+            df_review = None
 
+            gc.collect()
+            # sleep(1)
+            # driver = get_browser(chromedriver_path, download_dir)
+            # driver.set_window_size(1400, 1000)
+            # sleep(1)
+            # driver.maximize_window()
+            # driver.minimize_window()
+
+        write_last_index(count, download_dir)
+        sleep(.5)
+
+    write_or_append_data(df_hotel, file_hotel)
+    write_or_append_data(df_review, file_yorum)
 
 
 if __name__ == '__main__':
-    main()
+
+    data_file =  argv[1]
+    region_name = argv[2]
+    if len(argv) ==4:
+        download_dir = argv[3]
+    else:
+        download_dir = "../data/"
+
+    data = pd.read_feather(data_file)
+    data = data.drop_duplicates()
+    main(data, region_name, download_dir )
+
+

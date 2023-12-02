@@ -3,22 +3,28 @@ import pandas as pd
 
 from utils.utils import *
 from os.path import abspath, join
+from sys import argv
 
 
+"""
 region_id = "28930"
-chromedriver_path = "crawler/chromedriver.exe"
-download_dir = abspath(join("../data/florida"))
-file_hotels = join(download_dir, "florida_hotels.feather")
-file_last_index = join(download_dir, 'last_index.txt')
-oa = 'oa30'
-region_url = "https://www.tripadvisor.com.tr/Hotels-g28930-"
+region_name = 'Florida'
+"""
+def get_hotels_of_region(driver, region_id, region_name, download_dir, page='oa30', star=None, sleep_min=3, sleep_max=3 ):
 
+    if download_dir is None:
+        download_dir = abspath(join("../data/" + region_name))
+    else:
+        download_dir = abspath(join(download_dir + region_name))
 
-def get_hotel_ids_with_next_button(region_id, star=None, driver=None,  sleep_min=3, sleep_max=3 ):
-    global oa
+    region_url = "https://www.tripadvisor.com.tr/Hotels-g" + region_id + "-"
+    file_hotels = join(download_dir, region_name + "_hotels.feather")
+    file_last_index = join(download_dir, region_name + '_last_index.txt')
+
+    # return
     driver.set_window_size(1200, 900)
-    driver.get(region_url + oa)
-    print('Otel İndeksleri: ', oa[2:])
+    driver.get(region_url + page)
+    print('Page: ', page[2:])
 
     while True:
         sleep_a_while(sleep_min=sleep_min, sleep_max=sleep_max)  # better to sleep a while
@@ -53,7 +59,6 @@ def get_hotel_ids_with_next_button(region_id, star=None, driver=None,  sleep_min
         # sayfada gösterilen otellere ait bilgiler bu div altında
         # div_oteller = driver.find_elements(By.CLASS_NAME, "NXAUb")
         div_oteller = driver.find_elements(By.XPATH, "//div[@data-automation='hotel-card-title']")
-
         alar =[div_oteller[x].find_element(By.XPATH, "a[contains(@href,'Hotel_Review-g')]") for x in range(len(div_oteller))]
         hotel_urls_and_name = [(x.get_attribute('href'), x.text.split('. ')[-1])  for x in alar]
         h = [{'RegionID':x, 'HotelID':y, 'HotelName':z} for (x, y, z) in
@@ -62,18 +67,39 @@ def get_hotel_ids_with_next_button(region_id, star=None, driver=None,  sleep_min
         for x in h:
             df = pd.concat([df,pd.DataFrame.from_records(x, columns=x.keys(), index=[0] )] )
 
-        save_data(df, None, file_hotels, None, root_folder=getcwd())
+        write_or_append_data(df, file_hotels)
 
-        btnNext = driver.find_element(By.XPATH,"//a[@aria-label='Next page']" )
-        if btnNext is not None and 'disabled' not in btnNext.get_attribute('class'):
-            # print("Sonraki sayfaya geçiliyor...")
-            oa = 'oa' + btnNext.get_attribute('href').split('-oa')[-1].split('-')[0]
-            write_last_index(oa, file_last_index)
-            btnNext.click()
-        else:
-            break
+        try:
+            btnNext = driver.find_element(By.XPATH,"//a[@aria-label='Next page']" )
+            if btnNext is not None and 'disabled' not in btnNext.get_attribute('class'):
+                # print("Sonraki sayfaya geçiliyor...")
+                page = 'oa' + btnNext.get_attribute('href').split('-oa')[-1].split('-')[0]
+                write_last_index(page, file_last_index)
+                btnNext.click()
+            else:
+                print('Next Butonu Bulunamadı. Şu ana dek alınan bilgiler return ediliyor...')
+                return pd.read_feather(file_hotels)
+
+        except Exception as e:
+            from selenium.common.exceptions import NoSuchElementException
+            if NoSuchElementException == type(e):
+                print('Tüm oteller gezildi.')
+                return pd.read_feather(file_hotels)
+            else:
+                print('Beklenmeyen bir hata ile karşılaşıldı. Hata şuydu:\n', e)
+                return None
+
 
 
 if __name__ == "__main__":
+    region_id, region_name  = argv[1], argv[2]
+    if len(argv) ==4:
+        download_dir = argv[3]
+    else:
+        download_dir = "../data/"
+
+    chromedriver_path = "crawler/chromedriver.exe"
     driver = get_browser(chromedriver_path, download_dir)
-    get_hotel_ids_with_next_button(region_id, star=5, driver=driver,  sleep_min=6, sleep_max=7 )
+
+    get_hotels_of_region(driver, region_id, region_name, download_dir, star=5,
+                                   page='oa2850', sleep_min=4, sleep_max=5 )
