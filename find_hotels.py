@@ -2,12 +2,14 @@
 import pandas as pd
 
 from utils.utils import *
+from os.path import abspath, join
 
 
 region_id = "28930"
 chromedriver_path = "crawler/chromedriver.exe"
-download_dir = "../data/florida"
+download_dir = abspath(join("../data/florida"))
 file_hotels = join(download_dir, "florida_hotels.feather")
+file_last_index = join(download_dir, 'last_index.txt')
 oa = 'oa30'
 region_url = "https://www.tripadvisor.com.tr/Hotels-g28930-"
 
@@ -16,6 +18,8 @@ def get_hotel_ids_with_next_button(region_id, star=None, driver=None,  sleep_min
     global oa
     driver.set_window_size(1200, 900)
     driver.get(region_url + oa)
+    print('Otel İndeksleri: ', oa[2:])
+
     while True:
         sleep_a_while(sleep_min=sleep_min, sleep_max=sleep_max)  # better to sleep a while
         click_accept_button(driver)
@@ -64,7 +68,7 @@ def get_hotel_ids_with_next_button(region_id, star=None, driver=None,  sleep_min
         if btnNext is not None and 'disabled' not in btnNext.get_attribute('class'):
             # print("Sonraki sayfaya geçiliyor...")
             oa = 'oa' + btnNext.get_attribute('href').split('-oa')[-1].split('-')[0]
-            write_last_index(oa, download_dir  )
+            write_last_index(oa, file_last_index)
             btnNext.click()
         else:
             break

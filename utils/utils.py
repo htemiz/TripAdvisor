@@ -3,7 +3,9 @@ from time import sleep
 from selenium.webdriver.chrome.service import Service
 import pyautogui as pgui
 from os import getcwd
-from os.path import join, exists
+from os.path import join, exists, dirname, abspath
+from os import makedirs
+
 import pandas as pd
 from selenium.webdriver.common.by import By
 import gc
@@ -215,6 +217,9 @@ def save_data(df_hotel, df_review, file_hotel, file_yorum, root_folder= getcwd()
     sleep(1)
 
 
-def write_last_index(index, root_folder=getcwd()):
-    with open(join(root_folder, 'last_index.txt'), "w") as f:
+def write_last_index(index, file):
+    if not exists(dirname(file)):
+        makedirs(dirname(file))
+
+    with open(file, "w") as f:
         f.writelines(str(index))
