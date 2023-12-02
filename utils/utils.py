@@ -130,7 +130,6 @@ def move_mouse_to_mid_window(driver):
     # https://learn.microsoft.com/tr-tr/windows/win32/api/winuser/nf-winuser-mouse_event?redirectedfrom=MSDN
     # ctypes.windll.user32.mouse_event(2, 0, 0, 0, 0)  # left down
     # ctypes.windll.user32.mouse_event(4, 0, 0, 0, 0)  # left up
-
     # browser pencerenin başladığı piksel (y değeri)
     # driver.execute_script('return window.outerHeight - window.innerHeight;')
 

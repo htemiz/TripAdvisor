@@ -665,7 +665,6 @@ def get_hotel_information(region_id, hotel_id, driver, url):
     return hotel_data
 
 
-# chromedriver_path = r"D:\Software\chromedriver.exe"
 chromedriver_path = "crawler/chromedriver.exe"
 
 """
@@ -690,8 +689,10 @@ def main(data, region_name, download_dir ):
     else:
         download_dir = abspath(join(download_dir, region_name))
 
-    file_hotel = join(download_dir, region_name + "_hotels.feather")
-    file_yorum = join(download_dir, region_name + "reviews.feather")
+    file_hotel = join(download_dir, region_name + "_hotel_information.feather")
+    file_yorum = join(download_dir, region_name + "_hotel_reviews.feather")
+    file_last_index = join(download_dir, region_name + '_last_index.txt')
+
     first = True
     df_review = df_hotel = None
     n_periyot = 1
@@ -703,16 +704,11 @@ def main(data, region_name, download_dir ):
 
     for count in range(last_index, len(data)):#[hotelIDs[x] for x in [1,38, 39]]:
         # id= 507978# 507977
-        print('#%d/%d' % (count +1, ntotal), end=',  ')
-
-        region_id = data.iloc[count].RegionID
-        hotel_id = data.iloc[count].HotelID
-
+        print('#%d/%d' % (count +1, ntotal), end=' ')
+        region_id, hotel_id = data.loc[count,['RegionID', 'HotelID']]
         url = url_root + str(region_id) + "-d" + str(hotel_id)
-
         driver = get_browser(chromedriver_path, download_dir)
         driver.set_window_size(width, height)
-
         hotel_data = get_hotel_information(region_id, hotel_id, driver, url)
 
         #hotel_data None ise, bu id de bir otel yok demektir. sonraki otele eç
@@ -758,7 +754,7 @@ def main(data, region_name, download_dir ):
             # driver.maximize_window()
             # driver.minimize_window()
 
-        write_last_index(count, download_dir)
+        write_last_index(count, file_last_index)
         sleep(.5)
 
     write_or_append_data(df_hotel, file_hotel)
@@ -766,7 +762,6 @@ def main(data, region_name, download_dir ):
 
 
 if __name__ == '__main__':
-
     data_file =  argv[1]
     region_name = argv[2]
     if len(argv) ==4:
