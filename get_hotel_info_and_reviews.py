@@ -679,7 +679,6 @@ chromedriver_path = "crawler/chromedriver.exe"
     
     r"D:\calisma\projeler\tripadvisor\data\Antalya\Antalya_oteller.csv"
 """
-
 def main(data, region_name, download_dir ):
 
     url_root = "https://www.tripadvisor.com.tr/Hotel_Review-g"
