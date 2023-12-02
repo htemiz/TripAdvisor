@@ -6,7 +6,7 @@ from utils.utils import *
 
 region_id = "28930"
 chromedriver_path = "crawler/chromedriver.exe"
-download_dir = "data"
+download_dir = "../data/florida"
 file_hotels = join(download_dir, "florida_hotels.feather")
 oa = 'oa30'
 region_url = "https://www.tripadvisor.com.tr/Hotels-g28930-"
