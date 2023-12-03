@@ -1,86 +1,14 @@
-import re
-import codecs
-from lxml import html
-import requests
-import csv
-from typing import List, Any
 from bs4 import BeautifulSoup
-import urllib.request as request
-from contextlib import closing
 from time import sleep
-from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.touch_actions import TouchActions
-from selenium.webdriver.support.select import Select
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.touch_actions import TouchActions
-from selenium.webdriver.support.select import Select
 import pandas as pd
-from utils import *
 import gc
-from os import getcwd, listdir, makedirs
-from os.path import join, abspath, basename, dirname, exists
 
 
 url_user_prefix = 'https://www.tripadvisor.com/Profile/'
 
-def get_element(driver, name, by='class'):
-    found = False
-    element = None
-    try:
-        if by =='class':
-            element = driver.find_element_by_class_name(name)
-        elif by =='id':
-                element = driver.find_element_by_id(name)
-        found = True
-        return element
-
-    except:
-        if found:
-            return element
-
-        return None
-
-def click_accept_button(driver):
-    # print('Accept buton içindeyiz')
-
-    try:
-        #btn_accept = driver.find_element_by_id( 'onetrust-accept-btn-handler')
-
-        btn_accept = driver.find_element_by_xpath("//button[@id='onetrust-accept-btn-handler']")
-
-        if btn_accept is not None:
-            btn_accept.click()
-
-            driver.execute_script("arguments[0].click();", btn_accept)
-
-    except:
-        pass
 
 
-def click_and_press_esc(driver):
-
-    try:
-        btn_accept = driver.find_element_by_id('_evidon-accept-button')
-        if btn_accept is not None:
-            btn_accept.click()
-
-    except:
-        pass
-
-    webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-    webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
 
 
 def parse_about(data, driver, ):
@@ -89,7 +17,7 @@ def parse_about(data, driver, ):
     try:
         div_about = driver.find_element_by_xpath("//div[@data-tab='TABS_ABOUT']")
     except:
-        print('The element TABS_ABOUT cannot be found! Returning without parsing the about section')
+        print('The element TABS_ABOUT cannot be found! Returning without hotels the about section')
         return
 
 
@@ -358,7 +286,7 @@ def parse_reviews(driver, hotel_id):
                 if int(nReviews) <= 4:
                     break
 
-                div_reviews_tab = driver.find_element_by_xpath('//div[@data-test-target="reviews-tab"]')
+                div_reviews_tab = driver.find_element_by_xpath('//div[@data-test-target="hotels-tab"]')
                 btnNext = div_reviews_tab.find_element_by_class_name('next')
 
                 if btnNext is not None:
@@ -367,7 +295,7 @@ def parse_reviews(driver, hotel_id):
                     # sleep_a_while(sleep_min=sleep_min, sleep_max=sleep_max)  # better to sleep a while
 
                 else: # < span class ="ui_button nav next primary disabled" > Next < / span >
-                    print("Next button cannot be found. Terminating searching reviews for this hotel...")
+                    print("Next button cannot be found. Terminating searching hotels for this hotel...")
                     break
                 # else:
                 #     print("Pagination cannot be found! Probably no review for hotel ID:", hotel_id , " Terminating...")
@@ -379,7 +307,7 @@ def parse_reviews(driver, hotel_id):
                     btnNext = driver.find_element_by_class_name('next')
 
                     if  btnNext is not None:
-                        print("End of reviews.")
+                        print("End of hotels.")
                         break
                     else:
                         if df is not None and df.shape[0]>0:
@@ -409,119 +337,9 @@ def parse_reviews(driver, hotel_id):
 
 
 
-def get_hotel_information(region_id, hotel_id, driver):
-    hotel_data = dict()
 
-    url_root= "https://www.tripadvisor.com/Hotel_Review-g"
-    url = url_root + str(region_id) + "-d" + str(hotel_id)
-
-    driver.get(url)
-    driver.implicitly_wait(5)
-    click_accept_button(driver)
-    driver.implicitly_wait(2)
-    click_and_press_esc(driver)
-
-
-    hotel_data['RegionID'] = region_id
-    hotel_data['HotelID'] = hotel_id
-    hotel_data['Name'] = get_element(driver, "HEADING", "id").text if get_element(driver, "HEADING", "id") is not None else None
-    print("Hotel ID:", hotel_id, hotel_data['Name'])
-
-    hotel_data['Star'] = get_element(driver, "euDRl").find_element_by_tag_name('svg').get_attribute('aria-label').split(' of 5 bubbles')[0] if get_element(driver, "euDRl") is not None else None
-    hotel_data['Reviews'] = get_element(driver, "qqniT").text.replace(',','').split(' ')[0] if get_element(driver, "qqniT") is not None else None
-    hotel_data['Rank'] = get_element(driver, "cGAqf").text.replace('#', '').replace(',','').split(' ')[0] if get_element(driver, "cGAqf") is not None else None
-    hotel_data['Address'] = get_element(driver, "fHvkI").text if get_element(driver, "fHvkI") is not None else None
-
-    # About Section
-    hotel_data['Rating'] = get_element(driver, "IHSLZ ").text if get_element(driver, "IHSLZ ") is not None else None
-    parse_about(hotel_data, driver)
-
-    try:
-        div_reviews_tab = driver.find_element_by_xpath('//div[@data-test-target="reviews-tab"]')
-
-        if div_reviews_tab is not None:
-            list_traveler_ratings = div_reviews_tab.find_element_by_class_name('LojWi')
-            sp = BeautifulSoup(list_traveler_ratings.get_attribute('innerHTML'), 'html.parser')
-
-            traveler_ratings = sp.find_all('li')
-            for li in traveler_ratings:
-                hotel_data['Rating_' + li.label.text] =  li.find('span', {'class': 'NLuQa'}).text
-    except:
-        pass
-    #
-    # with codecs.open('d:/' + 'Istanbul' + '_oteller_bilgileri.txt', 'a', encoding='utf8') as cikti:
-    #     yazici = csv.DictWriter(cikti, hotel_data.keys() )
-    #     yazici.writerow(hotel_data)
-    reviews  = parse_reviews(driver, hotel_id)
-
-    return hotel_data, reviews
-
-
-def find_next_button(driver):
-
-    # div = driver.find_element_by_class_name("prw_common_standard_pagination_resp")
-    try:
-        btnNext = driver.find_element_by_xpath('//div[@data-trackingstring="pagination_h"]//a[text()="Next"]')
-
-    except:
-        return None
-
-    return btnNext
-
-def yorum_olmayanlari_yaz(hotel_id, root_folder=getcwd()):
-
-    with open(join(root_folder, '../Yorum bulunamayan oteller.txt'), 'a', encoding='utf8') as f:
-        f.writelines(str(hotel_id) + "\n")
-
-
-def save_data(df_hotel, df_review, file_hotel, file_yorum, root_folder= getcwd()):
-    if df_hotel is not None:
-        if exists(join(root_folder,file_hotel)):
-            df_saved_hotel = pd.read_feather(join(root_folder, file_hotel))
-            df_saved_hotel = pd.concat([df_saved_hotel, df_hotel], ignore_index=True, sort=False)
-        else:
-            df_saved_hotel = df_hotel
-
-        try:
-            df_saved_hotel.reset_index(inplace=True, drop=True)
-            print("Otel bilgileri kayıt ediliyor... ", end='')
-            df_saved_hotel.to_feather(join(root_folder, file_hotel))
-            print("Başarılı!")
-
-            df_saved_hotel = None
-        except Exception as e:
-            print("Otel bilgileri Feather dosyasını yazarken hata ile karşılaşıldı")
-            print(e)
-
-    if df_review is not None:
-        if exists(join(root_folder, file_yorum)):
-            df_saved_yorum = pd.read_feather(join(root_folder, file_yorum))
-            df_saved_yorum = pd.concat([df_saved_yorum, df_review], ignore_index=True, sort=False)
-        else:
-            df_saved_yorum = df_review
-
-        try:
-            df_saved_yorum.reset_index(inplace=True, drop=True)
-            print("Yorum bilgileri kayıt ediliyor... ", end='')
-            df_saved_yorum.to_feather(join(root_folder, file_yorum))
-            print("Başarılı!")
-
-            df_saved_yorum = None
-        except Exception as e:
-            print("Yorum bilgileri Feather dosyasını yazarken hata ile karşılaşıldı")
-            print(e)
-
-    gc.collect()
-    sleep(1)
-
-
-def write_last_index(index, root_folder=getcwd()):
-    with open(join(root_folder, 'last_index.txt'), "w") as f:
-        f.writelines(str(index))
-
-
-chromedriver_path = r"D:\programlar\chromedriver 103.exe"
-download_dir = r"D:\calisma\projeler\tripadvisor\data"
+chromedriver_path = "../crawler/chromedriver.exe"
+download_dir = r"../../data/guests"
 
 
 
@@ -615,8 +433,6 @@ def parse_user(driver, user_id, ):
         str_span_rating = r.find_element_by_xpath('./div[' + str_idx + ']/div/a/div/span').get_attribute('class').split(' ')[-1].split('_')[-1]
         dict_review_data['user_rating'] = str(int(str_span_rating)/10)
 
-
-
         #   kullanıcının tam yorumunu yorum_url'den almak daha iyi  ---- #
         #   Örnek:
         #   'https://www.tripadvisor.com/ShowUserReviews-g641737-d6619150-r825478360-Hotel_Abelhof-Neukirchen_am_Grossvenediger_Austrian_Alps.html'
@@ -624,7 +440,6 @@ def parse_user(driver, user_id, ):
         #
         dict_review_data['reivew'] = r.find_element_by_xpath('./div['  + str_idx + ']/div/a/div/div[2]').text
         dict_review_data['stay_date'] = r.find_element_by_xpath('./div['  + str_idx + ']/div/a/div/div[3]').text.split(':')[-1].strip()
-
 
         # RESİMLER VAR MI?
         if resimler_var : # resimler listesi var ise
@@ -777,13 +592,11 @@ def main():
 
     try:
         save_data(df_user, df_review, file_hotel, file_yorum, download_dir)
-
         # df_user.to_excel('d:/otel_bilgileri.xlsx')
         # df_review.to_excel('d:/yorum_bilgileri.xlsx')
     except:
         print("Feather dosyalarını yazarken hata ile karşılaşıldı")
         return
-
 
 
 if __name__ == '__main__':

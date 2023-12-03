@@ -1,4 +1,4 @@
-__all__ = ['get_Albums']
+__all__ = ['open_page']
 
 
 from . utils import *
