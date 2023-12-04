@@ -1,10 +1,10 @@
 import pandas as pd
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from ..utils.utils import *
+from utils.utils import *
 from os.path import abspath, join
 from sys import argv
-
+from hotels.helpers import get_region_id_and_name_from_url
 
 """
 region_id = "28930"
