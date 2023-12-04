@@ -43,8 +43,4 @@ def get_hotel_information(region_id, hotel_id, driver, url):
                 hotel_data[key] = value
     except:
         pass
-    #
-    # with codecs.open('d:/' + 'Istanbul' + '_oteller_bilgileri.txt', 'a', encoding='utf8') as cikti:
-    #     yazici = csv.DictWriter(cikti, hotel_data.keys() )
-    #     yazici.writerow(hotel_data)
     return hotel_data

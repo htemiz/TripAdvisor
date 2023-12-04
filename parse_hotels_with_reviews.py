@@ -68,7 +68,7 @@ def main(data, region_name, download_dir ):
         if hotel_data is None:
             print("Bu ID'ye (", str(id), ") sahip bir otel yok! Geçiliyor...\n")
             sleep(.2)
-            write_last_index(count, download_dir)
+            write_last_index(count, file_last_index)
             continue
 
         reviews = parse_reviews(driver, hotel_id, url)

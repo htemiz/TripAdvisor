@@ -143,11 +143,13 @@ def move_mouse_to_mid_window(driver):
 
 def open_page(driver, url):
     driver.get(url)
-    driver.implicitly_wait(3)
+    driver.implicitly_wait(3.5)
     sleep_a_while(sleep_min=sleep_min , sleep_max=sleep_max )  # better to sleep a while
 
     click_accept_button(driver)
     driver.implicitly_wait(1)
+    sleep_a_while(sleep_min=sleep_min , sleep_max=sleep_max )  # better to sleep a while
+    click_and_press_esc(driver)
     sleep_a_while(sleep_min=sleep_min , sleep_max=sleep_max )  # better to sleep a while
     click_and_press_esc(driver)
 

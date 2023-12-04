@@ -3,24 +3,15 @@ from parse_hotels_with_reviews import main
 from region.find_hotels import get_hotels_of_region
 from utils.utils import get_browser
 
-
-region_id, region_name  = '28930', 'Florida'
-download_dir = "../../data/"
-chromedriver_path = "crawler/chromedriver.exe"
-driver = get_browser(chromedriver_path, download_dir)
-
-get_hotels_of_region(driver, region_id, region_name, download_dir, star=5,
-                               page='oa00', sleep_min=3, sleep_max=5 )
-
-
-
-
-
-
-
-
-
-
+#
+# region_id, region_name  = '28930', 'Florida'
+# download_dir = "../data/"
+# chromedriver_path = "crawler/chromedriver.exe"
+# driver = get_browser(chromedriver_path, download_dir)
+#
+# get_hotels_of_region(driver, region_id, region_name, download_dir, star=5,
+#                                page='oa00', sleep_min=3, sleep_max=5 )
+#
 
 
 
