@@ -5,16 +5,16 @@ import pyautogui as pgui
 from os import getcwd
 from os.path import join, exists, dirname, abspath
 from os import makedirs
-
+from numpy.random import random
 import pandas as pd
 from selenium.webdriver.common.by import By
 import gc
 from selenium.webdriver.common.keys import Keys
 
 
-sleep_min = 2.5
+sleep_min = 2.0
 sleep_max = 4.5
-slp_factor = 15
+slp_factor = 1
 wait_time = 1.5
 slp_small_factor = 7.5
 
@@ -181,9 +181,9 @@ def read_more_butonuna_bas(driver):
             pass
 
 
-def sleep_a_while(factor= 1.0, sleep_min = sleep_min, sleep_max = sleep_max):
-    sleep(sleep_min * factor)
-    # sleep( ((sleep_max-sleep_min) * random() + sleep_min ) * factor)
+def sleep_a_while(sleep_min = sleep_min, sleep_max = sleep_max, factor= 1.0,):
+    # sleep(sleep_min * factor)
+    sleep( ((sleep_max-sleep_min) * random() + sleep_min ) * factor)
 
 def yorum_olmayanlari_yaz(hotel_id, root_folder=getcwd()):
 

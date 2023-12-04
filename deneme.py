@@ -21,7 +21,7 @@ download_dir = "../data/"
 
 # find_hotels.get_hotels_of_region(driver, '28930', 'Florida', download_dir )
 
-data_file = "../data/Florida/Florida_hotels.feather"
+data_file = "../data/Florida/Hotels_in_Florida_Region.feather"
 
 data = pd.read_feather(data_file)
 data = data.drop_duplicates()
