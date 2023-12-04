@@ -6,8 +6,9 @@ from hotels.parse import get_hotel_information
 from hotels.reviews import parse_reviews
 from utils.utils import get_browser, write_last_index, write_or_append_data
 import pandas as pd
-import gc
 from time import sleep
+from os.path import abspath
+import gc
 
 
 
@@ -50,7 +51,7 @@ def main(data, region_name, download_dir ):
 
     ntotal= len(data)
     # last_index = hotelIDs.index(kalinan) # kalinan index
-    last_index = 2000
+    last_index = 0
 
     for count in range(last_index, len(data)):#[hotelIDs[x] for x in [1,38, 39]]:
         # id= 507978# 507977
