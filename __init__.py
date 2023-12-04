@@ -1,13 +1,14 @@
 import json
+from .config import settings
 
-with open('settings.json') as setting_file:
-    settings = json.load(setting_file)
+# with open('program/settings.json') as setting_file:
+#     settings = json.load(setting_file)
+#
+#     print('hotelsteyiz')
+#     print(settings)
 
-    print('hotelsteyiz')
-    print(settings)
 
-
-__all__ = ['get_Albums', 'settings']
+# __all__ = ['get_Albums', 'settings']
 
 
 # from . users import *

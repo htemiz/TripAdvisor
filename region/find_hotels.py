@@ -1,7 +1,7 @@
-
 import pandas as pd
-
-from utils.utils import *
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from ..utils.utils import *
 from os.path import abspath, join
 from sys import argv
 
@@ -96,9 +96,9 @@ if __name__ == "__main__":
     if len(argv) ==4:
         download_dir = argv[3]
     else:
-        download_dir = "../data/"
+        download_dir = "../../data/"
 
-    chromedriver_path = "crawler/chromedriver.exe"
+    chromedriver_path = "../crawler/chromedriver.exe"
     driver = get_browser(chromedriver_path, download_dir)
 
     get_hotels_of_region(driver, region_id, region_name, download_dir, star=5,

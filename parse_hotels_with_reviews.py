@@ -1,17 +1,17 @@
 from sys import argv
-from hotels.reviews import *
-from hotels.parse import get_hotel_information
-from utils.utils import get_browser, write_last_index, write_or_append_data
-from hotels.reviews import parse_reviews
+from .hotels.reviews import *
+from .hotels.parse import get_hotel_information
+from .hotels.reviews import parse_reviews
+from .utils.utils import get_browser, write_last_index, write_or_append_data
 import pandas as pd
 import gc
 from time import sleep
+from .config import settings
 
 
 sleep_min = 1.5
 sleep_max = 3
 wait_time = 3.5
-
 width, height = 1250, 1000
 
 
@@ -30,6 +30,7 @@ chromedriver_path = "crawler/chromedriver.exe"
     
     r"D:\calisma\projeler\tripadvisor\data\Antalya\Antalya_oteller.csv"
 """
+
 def main(data, region_name, download_dir ):
 
     url_root = "https://www.tripadvisor.com.tr/Hotel_Review-g"

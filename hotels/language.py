@@ -1,5 +1,5 @@
-from utils.utils import click_and_press_esc, sleep_a_while, get_element, click_accept_button
-from utils.utils import sleep_min, sleep_max
+from ..utils.utils import click_and_press_esc, sleep_a_while, get_element, click_accept_button
+from ..utils.utils import sleep_min, sleep_max
 from selenium.webdriver.common.by import By
 
 

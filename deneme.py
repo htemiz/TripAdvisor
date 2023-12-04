@@ -1,6 +1,4 @@
-import find_hotels
 import pandas as pd
-from utils.utils import get_browser
 from parse_hotels_with_reviews import main
 
 download_dir = "../data/"

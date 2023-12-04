@@ -1,7 +1,7 @@
-from utils.utils import *
-from hotels.language import *
+from ..utils.utils import *
+from .language import *
 from bs4 import BeautifulSoup
-from hotels.helpers import *
+from .helpers import *
 
 def parse_reviews(driver, hotel_id, url):
     df = pd.DataFrame()
