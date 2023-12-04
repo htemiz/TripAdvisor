@@ -1,4 +1,4 @@
-from ..utils.utils import *
+from utils.utils import *
 from .language import *
 from bs4 import BeautifulSoup
 from .helpers import *

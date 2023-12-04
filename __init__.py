@@ -1,5 +1,6 @@
+
 import json
-from .config import settings
+from config import settings
 
 # with open('program/settings.json') as setting_file:
 #     settings = json.load(setting_file)

@@ -1,10 +1,8 @@
-from ..config import settings
-
-
-
-
-__all__ = ['get_Albums', 'settings']
-
-
+from config import settings
 from . helpers import *
+
+
+__all__ = ['settings']
+
+
 
