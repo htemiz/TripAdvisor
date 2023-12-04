@@ -10,7 +10,7 @@ import pandas as pd
 from selenium.webdriver.common.by import By
 import gc
 from selenium.webdriver.common.keys import Keys
-
+from config import settings
 
 sleep_min = 2.5
 sleep_max = 4.5

@@ -1,14 +1,15 @@
 
 from sys import argv
+from config import settings
 from hotels.reviews import *
 from hotels.parse import get_hotel_information
 from hotels.reviews import parse_reviews
 from utils.utils import get_browser, write_last_index, write_or_append_data
+from utils.utils import settings
 import pandas as pd
 import gc
 from time import sleep
 
-from config import settings
 
 
 

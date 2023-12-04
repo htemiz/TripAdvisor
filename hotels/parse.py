@@ -1,3 +1,4 @@
+from config import settings
 from selenium.webdriver.common.by import By
 from .helpers import parse_about
 from utils.utils import get_element, open_page
