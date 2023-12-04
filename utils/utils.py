@@ -1,3 +1,4 @@
+from config import configuration
 from selenium import webdriver
 from time import sleep
 from selenium.webdriver.chrome.service import Service
@@ -10,13 +11,12 @@ import pandas as pd
 from selenium.webdriver.common.by import By
 import gc
 from selenium.webdriver.common.keys import Keys
-from config import settings
 
-sleep_min = 2.5
-sleep_max = 4.5
+sleep_min = configuration['sleep_min']
+sleep_max = configuration['sleep_max']
 slp_factor = 1
-wait_time = 1.5
-slp_small_factor = 7.5
+wait_time = configuration['wait_time']
+slp_small_factor = .5
 
 
 def click_accept_button(driver):

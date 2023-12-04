@@ -1,4 +1,4 @@
-from config import settings
+from config import configuration
 from utils.utils import *
 from .language import *
 from bs4 import BeautifulSoup

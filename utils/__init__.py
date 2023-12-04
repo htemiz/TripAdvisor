@@ -1,4 +1,4 @@
-from config import settings
+from config import configuration
 from . utils import *
 
 

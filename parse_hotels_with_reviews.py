@@ -1,11 +1,10 @@
 
+from config import configuration
 from sys import argv
-from config import settings
 from hotels.reviews import *
 from hotels.parse import get_hotel_information
 from hotels.reviews import parse_reviews
 from utils.utils import get_browser, write_last_index, write_or_append_data
-from utils.utils import settings
 import pandas as pd
 import gc
 from time import sleep
@@ -13,10 +12,7 @@ from time import sleep
 
 
 
-sleep_min = 1.5
-sleep_max = 3
-wait_time = 3.5
-width, height = 1250, 1000
+width, height = configuration['width'], configuration['height']
 
 
 

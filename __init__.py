@@ -1,8 +1,8 @@
 
 import json
-from config import settings
+from config import configuration
 
-# with open('program/settings.json') as setting_file:
+# with open('program/configuration.json') as setting_file:
 #     settings = json.load(setting_file)
 #
 #     print('hotelsteyiz')

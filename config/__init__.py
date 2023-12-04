@@ -1,6 +1,6 @@
 import json
 
-with open('config/settings.json') as setting_file:
-    settings = json.load(setting_file)
+with open('config/configuration.json') as setting_file:
+    configuration = json.load(setting_file)
 
-__all__ = ['settings']
+__all__ = ['configuration']

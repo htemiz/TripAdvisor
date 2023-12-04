@@ -1,5 +1,5 @@
+from config import configuration
 from selenium.webdriver.common.by import By
-from config import settings
 from utils.utils import sleep_a_while,  sleep_max, sleep_min, wait_time
 from utils.utils import click_and_press_esc
 
