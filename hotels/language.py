@@ -23,7 +23,7 @@ def dil_secenekleri_divini_ver(driver, url ):
         column_dil = div_rev_filters.find_elements(By.CLASS_NAME, 'ui_column')[-1]
         ul_dil = column_dil.find_element(By.TAG_NAME,'ul')
         try:
-            div = ul_dil.find_element(By.TAG_NAME, 'div')  # 'Diğer' metninin yazıldığı div
+            div = ul_dil.find_element(By.TAG_NAME, 'div')  # 'Diğer' metnin yazıldığı div
         # span_diger = div.find_element(By.TAG_NAME, 'span')
             return div, None
         except Exception as ex:
@@ -79,6 +79,7 @@ def dilleri_listele(driver, div_diller, ul_diller ):
         div_menu_diller = driver.find_element(By.CLASS_NAME, 'TocEc')
         diller = div_menu_diller.find_elements(By.TAG_NAME, 'li')[1:] # ilki tüm diller seçeneğidir.
         # text_diller_listesi = [dil.text.split(' ')[0] for dil in diller if 'İngilizce' not in dil.text] #ingilizceyi çıkar
+        diller = [x for x in diller if '(0)' not in x.text] # yorumu olmayan dilleri alma
         text_diller_listesi = [dil.text.split(' ')[0] for dil in diller] #tüm diller. ingilizce dahil
         click_and_press_esc(driver)
         sleep_a_while(sleep_min=sleep_min, sleep_max=sleep_max)  # better to sleep a while
@@ -90,8 +91,6 @@ def dilleri_listele(driver, div_diller, ul_diller ):
         click_and_press_esc(driver)
         sleep_a_while(sleep_min=sleep_min, sleep_max=sleep_max)  # better to sleep a while
         return text_diller_listesi
-
-
 
 
 def dili_sec(driver, div_diger_diller, ul_diller, text_dil=None ):
