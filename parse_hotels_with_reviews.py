@@ -11,10 +11,7 @@ from os.path import abspath
 import gc
 
 
-
-
 width, height = configuration['width'], configuration['height']
-
 
 
 chromedriver_path = "crawler/chromedriver.exe"
@@ -51,7 +48,7 @@ def main(data, region_name, download_dir ):
 
     ntotal= len(data)
     # last_index = hotelIDs.index(kalinan) # kalinan index
-    last_index = 0
+    last_index = 2000
 
     for count in range(last_index, len(data)):#[hotelIDs[x] for x in [1,38, 39]]:
         # id= 507978# 507977
@@ -96,12 +93,8 @@ def main(data, region_name, download_dir ):
             df_review = None
 
             gc.collect()
-            # sleep(1)
-            # driver = get_browser(chromedriver_path, download_dir)
-            # driver.set_window_size(1400, 1000)
-            # sleep(1)
-            # driver.maximize_window()
-            # driver.minimize_window()
+        from config.update import update_config
+        update_config(file_path='config/configuration.json', path="last_index", new_value=count)
 
         write_last_index(count, file_last_index)
         sleep(.5)
