@@ -4,7 +4,7 @@ from time import sleep
 from selenium.webdriver.chrome.service import Service
 import pyautogui as pgui
 from os import getcwd
-from os.path import join, exists, dirname, abspath
+from os.path import join, exists, dirname
 from os import makedirs
 from numpy.random import random
 import pandas as pd
