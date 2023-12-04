@@ -48,7 +48,7 @@ def main(data, region_name, download_dir ):
 
     ntotal= len(data)
     # last_index = hotelIDs.index(kalinan) # kalinan index
-    last_index = 2000
+    last_index = configuration['last_index']
 
     for count in range(last_index, len(data)):#[hotelIDs[x] for x in [1,38, 39]]:
         # id= 507978# 507977
@@ -94,9 +94,9 @@ def main(data, region_name, download_dir ):
 
             gc.collect()
         from config.update import update_config
-        update_config(file_path='config/configuration.json', path="last_index", new_value=count)
+        update_config(file_path='config/configuration.json', path=["last_index"], new_value=count)
 
-        write_last_index(count, file_last_index)
+        # write_last_index(count, file_last_index)
         sleep(.5)
 
     write_or_append_data(df_hotel, file_hotel)
