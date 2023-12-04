@@ -12,7 +12,7 @@ import gc
 from selenium.webdriver.common.keys import Keys
 
 
-sleep_min = 2.0
+sleep_min = 2.5
 sleep_max = 4.5
 slp_factor = 1
 wait_time = 1.5
