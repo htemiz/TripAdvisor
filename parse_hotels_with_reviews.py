@@ -1,5 +1,6 @@
 
 from config import configuration
+from config.update import update_config
 from sys import argv
 from hotels.reviews import *
 from hotels.parse import get_hotel_information
@@ -9,7 +10,6 @@ import pandas as pd
 from time import sleep
 from os.path import abspath
 import gc
-
 
 width, height = configuration['width'], configuration['height']
 
@@ -93,7 +93,6 @@ def main(data, region_name, download_dir ):
             df_review = None
 
             gc.collect()
-        from config.update import update_config
         update_config(file_path='config/configuration.json', path=["last_index"], new_value=count)
 
         # write_last_index(count, file_last_index)
