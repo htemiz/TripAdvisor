@@ -12,6 +12,13 @@ def parse_reviews(driver, hotel_id, url):
 
     div_diger_diller, ul_diller = dil_secenekleri_divini_ver(driver, url )
 
+    # try again
+    if div_diger_diller is None and ul_diller is None:
+        hosgeldiniz_penceresini_kapat(driver)
+        click_and_press_esc(driver)  # arada pop-up falan çıkarsa diye
+        click_accept_button(driver)
+        div_diger_diller, ul_diller = dil_secenekleri_divini_ver(driver, url )
+
     if div_diger_diller is None and ul_diller is None:
         print('\nDillerle ilgili hiçbir buton bulunamadı. Muhtemelen bu otelin yorum bilgilerine erişilemiyor.'
               'Bu otel geçilecek...\n')
