@@ -143,7 +143,10 @@ def parse_reviews(driver, hotel_id, url):
                 print("Yorumlar bulunamadı.")
                 print('\nHata şuydu:', e, "\n\n")
                 yorum_olmayanlari_yaz(hotel_id)
-                return None
+                if data is not None and len(data) > 0:
+                    return data
+                else:
+                    return None
 
             sayfa  +=1
 
