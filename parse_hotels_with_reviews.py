@@ -53,6 +53,7 @@ def main(data, region_name, download_dir ):
     for count in range(last_index, len(data)):#[hotelIDs[x] for x in [1,38, 39]]:
         # id= 507978# 507977
         print('Hotel Index: #%d/%d' % (count, ntotal), end=' ')
+
         region_id, hotel_id = data.loc[count,['RegionID', 'HotelID']]
         url = url_root + str(region_id) + "-d" + str(hotel_id)
         driver = get_browser(chromedriver_path, download_dir)

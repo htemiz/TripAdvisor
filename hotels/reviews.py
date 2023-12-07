@@ -73,9 +73,9 @@ def parse_reviews(driver, hotel_id, url):
                 reviews = soup.find_all('div', {'data-test-target':"HR_CC_CARD"})
 
                 if reviews is None:
-                    print("Hiçbir Yorum Bulunamadı! Otel ID:", hotel_id)
+                    print("Hiçbir Yorum Bulunamadı! Dil: ", text_dil)
                     # yorum_olmayanlari_yaz(hotel_id, download_dir)
-                    return None # devam etmeye gerek yok. Metoddan çık
+                    break # devam etmeye gerek yok.
 
                 rCount= 0  # to track nth review
                 for r in reviews:
@@ -132,8 +132,7 @@ def parse_reviews(driver, hotel_id, url):
                     break
 
             except Exception as e:
-                print("Yorumlar bulunamadı.")
-                print('\nHata şuydu:', e, "\n\n")
+                print( "\n\n", text_dil, " dilindeki yorumlar alınırken şu hata ile karşılaşıldı:\n", e, "\n\n" )
                 yorum_olmayanlari_yaz(hotel_id)
                 break
 
