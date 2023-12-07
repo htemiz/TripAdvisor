@@ -52,7 +52,7 @@ def main(data, region_name, download_dir ):
 
     for count in range(last_index, len(data)):#[hotelIDs[x] for x in [1,38, 39]]:
         # id= 507978# 507977
-        print('#%d/%d' % (count +1, ntotal), end=' ')
+        print('Hotel Index: #%d/%d' % (count, ntotal), end=' ')
         region_id, hotel_id = data.loc[count,['RegionID', 'HotelID']]
         url = url_root + str(region_id) + "-d" + str(hotel_id)
         driver = get_browser(chromedriver_path, download_dir)
@@ -63,7 +63,10 @@ def main(data, region_name, download_dir ):
         if hotel_data is None:
             print("Bu ID'ye (", str(id), ") sahip bir otel yok! Geçiliyor...\n")
             sleep(.2)
-            write_last_index(count, file_last_index)
+            update_config(file_path='config/configuration.json', path=["last_index"],
+                          new_value=count + 1)  # count + 1, to start with next hotel in next time
+
+            # write_last_index(count +1, file_last_index) # count + 1, to start with next hotel in next time
             continue
 
         reviews = parse_reviews(driver, hotel_id, url)
@@ -93,7 +96,7 @@ def main(data, region_name, download_dir ):
             df_review = None
 
             gc.collect()
-        update_config(file_path='config/configuration.json', path=["last_index"], new_value=count)
+        update_config(file_path='config/configuration.json', path=["last_index"], new_value=count+1) # count + 1, to start with next hotel in next time
 
         # write_last_index(count, file_last_index)
         sleep(.5)

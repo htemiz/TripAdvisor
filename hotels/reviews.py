@@ -118,35 +118,24 @@ def parse_reviews(driver, hotel_id, url):
                 # next butonu var mı?
                 try:
                     btnNext = None
-                    if int(nReviews) <= 4:
-                        break
+                    # if int(nReviews) <= 4:
+                    #     break
                     btnNext = driver.find_element(By.XPATH, "//a[text()='Sonraki']")
                     if btnNext is not None and 'disabled' not in btnNext.get_attribute('class'):
                         # print("Sonraki sayfaya geçiliyor...")
                         btnNext.click()
-
                     else: # < span class ="ui_button nav next primary disabled" > Next < / span >
-                        print("Next button cannot be found or disabled. Terminating...")
+                        print("Next button either is disabled or not clickable. Passing to next language...")
                         break
-                except:
-                    if df is not None and df.shape[0]>0:
-                        print(nReviewsOfLanguage, text_dil, " yorum alındı.")
-                        break
-                        # return df
-                    else:
-                        # return None
-                        print('Bilinmeyen bir sorun oluştu. Dil: ', text_dil)
-                        break
-                        pass
+                except Exception as e:
+                    print(nReviewsOfLanguage, text_dil, " yorum alındı.")
+                    break
 
             except Exception as e:
                 print("Yorumlar bulunamadı.")
                 print('\nHata şuydu:', e, "\n\n")
                 yorum_olmayanlari_yaz(hotel_id)
-                if data is not None and len(data) > 0:
-                    return data
-                else:
-                    return None
+                break
 
             sayfa  +=1
 
