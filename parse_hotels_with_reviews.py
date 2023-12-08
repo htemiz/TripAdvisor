@@ -12,7 +12,7 @@ from os.path import abspath
 import gc
 
 width, height = configuration['width'], configuration['height']
-
+file_type = configuration['file_type']
 
 chromedriver_path = "crawler/chromedriver.exe"
 
@@ -38,8 +38,8 @@ def main(data, region_name, download_dir ):
     else:
         download_dir = abspath(join(download_dir, region_name))
 
-    file_hotel = join(download_dir, region_name + "_hotel_information.feather")
-    file_yorum = join(download_dir, region_name + "_hotel_reviews.feather")
+    file_hotel = join(download_dir, region_name + "_hotel_information." + file_type)
+    file_yorum = join(download_dir, region_name + "_hotel_reviews." + + file_type)
     file_last_index = join(download_dir, region_name + '_last_index.txt')
 
     first = True
@@ -113,8 +113,8 @@ if __name__ == '__main__':
         download_dir = argv[3]
     else:
         download_dir = "../data/"
-
-    data = pd.read_feather(data_file)
+    fonksiyon = getattr(pd, "read_" + file_type)
+    data = fonksiyon(data_file)
     data = data.drop_duplicates()
     main(data, region_name, download_dir )
 

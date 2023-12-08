@@ -190,22 +190,32 @@ def yorum_olmayanlari_yaz(hotel_id, root_folder=getcwd()):
     with open(join(root_folder, '../Yorum bulunamayan oteller.txt'), 'a', encoding='utf8') as f:
         f.writelines(str(hotel_id) + "\n")
 
-def write_or_append_data(data, file):
+def write_or_append_data(data, file,):
     if not exists(dirname(file)):
         makedirs(dirname(file))
 
     if exists(file):
-        df_saved_data = pd.read_feather(file)
-        df_saved_data = pd.concat([df_saved_data, data], ignore_index=True, sort=False)
+
+        if ".feather" in file:
+            df_saved_data = pd.read_feather(file)
+        elif ".parquet" in file:
+            df_saved_data = pd.read_parquet(file)
     else:
         df_saved_data = data
+
     try:
-        df_saved_data.reset_index(inplace=True, drop=True)
         print("DataFrame kayıt ediliyor... ", end='')
-        df_saved_data.to_feather(file)
+
+        if ".feather" in file:
+            df_saved_data.reset_index(inplace=True, drop=True)
+            df_saved_data.to_feather(file)
+        elif ".parquet" in file:
+            df_saved_data.to_parquet(file)
+
         print("Başarılı!")
     except Exception as e:
         print("DataFrame Feather dosyasını yazarken hata ile karşılaşıldı. Hata şuydu:", e)
+
 
 
 def save_data(df_hotel, df_review, file_hotel, file_yorum, root_folder= getcwd()):
