@@ -63,7 +63,7 @@ def main(data, region_name, download_dir ):
         # bazen insan olduğumuz doğrulanmak isteniyor. Aradığımız sayfa yerine
         # başka bir sayfa açıldığından, yeni browser ile yeniden deniyoruz
         if hotel_data is None:
-            sleep(5.5)
+            sleep(10.5)
             driver = get_browser(chromedriver_path, download_dir)
             driver.set_window_size(width, height)
             hotel_data = get_hotel_information(region_id, hotel_id, driver, url)
