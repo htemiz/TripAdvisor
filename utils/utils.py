@@ -205,9 +205,9 @@ def write_or_append_data(data, file,):
 
     try:
         print("DataFrame kayıt ediliyor... ", end='')
+        df_saved_data.reset_index(inplace=True, drop=True)
 
         if ".feather" in file:
-            df_saved_data.reset_index(inplace=True, drop=True)
             df_saved_data.to_feather(file)
         elif ".parquet" in file:
             df_saved_data.to_parquet(file)
