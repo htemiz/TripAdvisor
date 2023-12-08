@@ -39,7 +39,7 @@ def parse_reviews(driver, hotel_id, url):
         div_diger_diller, ul_diller = dil_secenekleri_divini_ver(driver, url) # diğer diller divi
 
         driver.execute_script("arguments[0].scrollIntoView();", driver.find_element(By.TAG_NAME, 'body'))
-        sleep_a_while(sleep_min=sleep_min, sleep_max=sleep_max)  # better to sleep a while
+        sleep_a_while(sleep_min=sleep_min/2, sleep_max=sleep_max /2)  # better to sleep a while
         click_and_press_esc(driver)  # arada pop-up falan çıkarsa diye
         hosgeldiniz_penceresini_kapat(driver)
         click_and_press_esc(driver)  # arada pop-up falan çıkarsa diye
@@ -53,12 +53,16 @@ def parse_reviews(driver, hotel_id, url):
         click_and_press_esc(driver)  # arada pop-up falan çıkarsa diye
         makine_cevirisini_kapat(driver)
 
-        nReviews = get_element(driver, "hkxYU").text.split(' ')[0] if get_element(driver,"hkxYU") is not None else None
+        try:
+            nReviews = get_element(driver, "hkxYU").text.split(' ')[0] if get_element(driver,"hkxYU") is not None else None
 
-        if nReviews is not None:
-            nReviews =int(nReviews.replace(',','').replace('.',''))
-        else:
-            print('Yorum Sayısı bulunamadı! Bu bir otel olmayabilir.')
+            if nReviews is not None:
+                nReviews =int(nReviews.replace(',','').replace('.',''))
+            else:
+                print('Yorum Sayısı bulunamadı! Bu bir otel olmayabilir.')
+                nReviews = 0
+        except Exception as e:
+            print('Yorum Sayısı bulunmaya çalışırken hata ile karşılaşıldı. Hata şuydu:\n', e, "\n")
             nReviews = 0
 
         sayfa =1
@@ -77,12 +81,17 @@ def parse_reviews(driver, hotel_id, url):
                 driver.implicitly_wait(wait_time / 2, )
                 # WebDriverWait(driver, wait_time / 2 )
                 soup = BeautifulSoup(driver.page_source, 'html.parser')
-                reviews = soup.find_all('div', {'data-test-target':"HR_CC_CARD"})
 
-                if reviews is None:
-                    print("Hiçbir Yorum Bulunamadı! Dil: ", text_dil)
-                    # yorum_olmayanlari_yaz(hotel_id, download_dir)
-                    break # devam etmeye gerek yok.
+                try:
+                    reviews = soup.find_all('div', {'data-test-target':"HR_CC_CARD"})
+
+                    if reviews is None:
+                        print("Hiçbir Yorum Bulunamadı! Dil: ", text_dil)
+                        # yorum_olmayanlari_yaz(hotel_id, download_dir)
+                        break # devam etmeye gerek yok.
+                except Exception as e:
+                    print('Yorumlar divi alınırken hata ile karşılaşıldı. Hata şuydu:\n', e, "\n")
+                    break
 
                 rCount= 0  # to track nth review
                 for r in reviews:
