@@ -3,6 +3,7 @@ from utils.utils import *
 from .language import *
 from bs4 import BeautifulSoup
 from .helpers import *
+from utils.utils import get_element, open_page
 
 def parse_reviews(driver, hotel_id, url):
     df = pd.DataFrame()
@@ -14,13 +15,16 @@ def parse_reviews(driver, hotel_id, url):
 
     # try again
     if div_diger_diller is None and ul_diller is None:
+        sleep_a_while(sleep_min=sleep_min/2, sleep_max=sleep_max /2)  # better to sleep a while
+        open_page(driver, url)
+        sleep_a_while(sleep_min=sleep_min, sleep_max=sleep_max)  # better to sleep a while
         hosgeldiniz_penceresini_kapat(driver)
         click_and_press_esc(driver)  # arada pop-up falan çıkarsa diye
         click_accept_button(driver)
         div_diger_diller, ul_diller = dil_secenekleri_divini_ver(driver, url )
 
     if div_diger_diller is None and ul_diller is None:
-        print('\nDillerle ilgili hiçbir buton bulunamadı. Muhtemelen bu otelin yorum bilgilerine erişilemiyor.'
+        print('\nDillerle ilgili hiçbir bilgi bulunamadı. Muhtemelen bu otelin yorum bilgilerine erişilemiyor.'
               'Bu otel geçilecek...\n')
         return None
 
