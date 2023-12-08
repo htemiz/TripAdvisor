@@ -39,7 +39,7 @@ def main(data, region_name, download_dir ):
         download_dir = abspath(join(download_dir, region_name))
 
     file_hotel = join(download_dir, region_name + "_hotel_information." + file_type)
-    file_yorum = join(download_dir, region_name + "_hotel_reviews." + + file_type)
+    file_yorum = join(download_dir, region_name + "_hotel_reviews." + file_type)
     file_last_index = join(download_dir, region_name + '_last_index.txt')
 
     first = True
@@ -59,6 +59,14 @@ def main(data, region_name, download_dir ):
         driver = get_browser(chromedriver_path, download_dir)
         driver.set_window_size(width, height)
         hotel_data = get_hotel_information(region_id, hotel_id, driver, url)
+
+        # bazen insan olduğumuz doğrulanmak isteniyor. Aradığımız sayfa yerine
+        # başka bir sayfa açıldığından, yeni browser ile yeniden deniyoruz
+        if hotel_data is None:
+            sleep(5.5)
+            driver = get_browser(chromedriver_path, download_dir)
+            driver.set_window_size(width, height)
+            hotel_data = get_hotel_information(region_id, hotel_id, driver, url)
 
         #hotel_data None ise, bu id de bir otel yok demektir. sonraki otele eç
         if hotel_data is None:
