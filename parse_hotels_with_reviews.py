@@ -40,10 +40,6 @@ def main(data, region_name, download_dir ):
 
     file_hotel = join(download_dir, region_name + "_hotel_information." + file_type)
     file_yorum = join(download_dir, region_name + "_hotel_reviews." + file_type)
-    file_last_index = join(download_dir, region_name + '_last_index.txt')
-
-    first = True
-    # df_review = df_hotel = None
     n_periyot = 1
 
     ntotal= len(data)
@@ -63,7 +59,7 @@ def main(data, region_name, download_dir ):
         # bazen insan olduğumuz doğrulanmak isteniyor. Aradığımız sayfa yerine
         # başka bir sayfa açıldığından, yeni browser ile yeniden deniyoruz
         if hotel_data is None:
-            sleep(10.5)
+            sleep(5.5)
             driver = get_browser(chromedriver_path, download_dir)
             driver.set_window_size(width, height)
             hotel_data = get_hotel_information(region_id, hotel_id, driver, url)
@@ -71,47 +67,21 @@ def main(data, region_name, download_dir ):
         #hotel_data None ise, bu id de bir otel yok demektir. sonraki otele eç
         if hotel_data is None:
             print("Bu ID'ye (", str(id), ") sahip bir otel yok! Geçiliyor...\n")
-            sleep(.2)
             update_config(file_path='config/configuration.json', path=["last_index"],
                           new_value=count + 1)  # count + 1, to start with next hotel in next time
-
-            # write_last_index(count +1, file_last_index) # count + 1, to start with next hotel in next time
             continue
 
         reviews = parse_reviews(driver, hotel_id, url)
-        sleep(.5)
-
-        # if first:
-        #     df_hotel = pd.DataFrame.from_records(hotel_data, columns=hotel_data.keys(), index=[0])
-        #     if reviews is not None:
-        #         df_review = reviews
-        #     first = False
-        # else:
-        #     df_hotel = df_hotel.append( hotel_data, ignore_index=True)
-        #     if reviews is not None:
-        #         if df_review is not None:
-        #             df_review = pd.concat([df_review, reviews], ignore_index=True, sort=False)
-        #         else:
-        #             df_review = reviews
 
         if count % n_periyot == 0:  # her n_periyot adet otelde bir kayıt yap
             driver.close()
             sleep(.5)
             write_or_append_data(hotel_data, file_hotel)
-            write_or_append_data(reviews, file_yorum)
-
-            # first = True
-            # df_hotel = None
-            # df_review = None
-
+            if reviews is not None:
+                write_or_append_data(reviews, file_yorum)
             gc.collect()
         update_config(file_path='config/configuration.json', path=["last_index"], new_value=count+1) # count + 1, to start with next hotel in next time
-
-        # write_last_index(count, file_last_index)
         sleep(.5)
-
-    # write_or_append_data(df_hotel, file_hotel)
-    # write_or_append_data(df_review, file_yorum)
 
 
 if __name__ == '__main__':
