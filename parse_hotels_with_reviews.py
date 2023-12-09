@@ -82,7 +82,6 @@ def main(data, region_name, download_dir ):
             gc.collect()
         update_config(file_path='config/configuration.json', path=["last_index"], new_value=count+1) # count + 1, to start with next hotel in next time
         sleep(.5)
-        """ 876  """
 
 if __name__ == '__main__':
     data_file =  argv[1]
