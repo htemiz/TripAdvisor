@@ -59,7 +59,7 @@ def main(data, region_name, download_dir ):
         # bazen insan olduğumuz doğrulanmak isteniyor. Aradığımız sayfa yerine
         # başka bir sayfa açıldığından, yeni browser ile yeniden deniyoruz
         if hotel_data is None:
-            sleep(5.5)
+            sleep(2.5)
             driver = get_browser(chromedriver_path, download_dir)
             driver.set_window_size(width, height)
             hotel_data = get_hotel_information(region_id, hotel_id, driver, url)
@@ -82,7 +82,7 @@ def main(data, region_name, download_dir ):
             gc.collect()
         update_config(file_path='config/configuration.json', path=["last_index"], new_value=count+1) # count + 1, to start with next hotel in next time
         sleep(.5)
-
+        """ 876  """
 
 if __name__ == '__main__':
     data_file =  argv[1]
