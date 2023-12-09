@@ -110,8 +110,8 @@ def main(data, region_name, download_dir ):
         # write_last_index(count, file_last_index)
         sleep(.5)
 
-    write_or_append_data(df_hotel, file_hotel)
-    write_or_append_data(df_review, file_yorum)
+    # write_or_append_data(df_hotel, file_hotel)
+    # write_or_append_data(df_review, file_yorum)
 
 
 if __name__ == '__main__':
