@@ -64,22 +64,30 @@ def makine_cevirisini_kapat(driver):
     except:
         pass
 
-def get_browser(chromedriver_path, download_dir, prompt=False, upgrade=True):
-    chrome_options = webdriver.ChromeOptions()
-    service = Service(executable_path=chromedriver_path)
-    
-    preferences = {"download.prompt_for_download": prompt,
-                   "download.default_directory": download_dir,
-                   "download.directory_upgrade": upgrade,
-                   "profile.default_content_settings.popups":1,
-                   "profile.default_content_setting_values.notifications": 2,
-                   "profile.default_content_setting_values.automatic_downloads": 1,
-                   }
+def get_browser(chromedriver_path, download_dir, prompt=False, upgrade=True, ntry=1):
+    try:
+        chrome_options = webdriver.ChromeOptions()
+        service = Service(executable_path=chromedriver_path)
 
-    chrome_options.add_experimental_option("prefs", preferences)
-    driver = webdriver.Chrome(service=service,
-                              options=chrome_options)
-    return driver
+        preferences = {"download.prompt_for_download": prompt,
+                       "download.default_directory": download_dir,
+                       "download.directory_upgrade": upgrade,
+                       "profile.default_content_settings.popups":1,
+                       "profile.default_content_setting_values.notifications": 2,
+                       "profile.default_content_setting_values.automatic_downloads": 1,
+                       }
+
+        chrome_options.add_experimental_option("prefs", preferences)
+        driver = webdriver.Chrome(service=service,
+                                  options=chrome_options)
+        return driver
+    except Exception as e:
+        print('Browser oluşturulurken şu hata ile karşılaşıldı:', e)
+        if ntry <=3:
+            print(f'Browser tekrar oluşturulmaya çalışılıyor... Deneme ({ntry})')
+            return get_browser(chromedriver_path, download_dir, prompt=False, upgrade=True, ntry=ntry+1)
+        else:
+            return None
 
 
 def get_element(driver, name, by='class'):
