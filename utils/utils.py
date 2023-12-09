@@ -222,8 +222,7 @@ def write_or_append_data(data, file,):
 
         print("Başarılı!")
     except Exception as e:
-        print("DataFrame Feather dosyasını yazarken hata ile karşılaşıldı. Hata şuydu:", e)
-
+        print("DataFrame Feather dosyasını yazarken şu hata ile karşılaşıldı:", e)
 
 
 def save_data(df_hotel, df_review, file_hotel, file_yorum, root_folder= getcwd()):
