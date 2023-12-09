@@ -225,47 +225,6 @@ def write_or_append_data(data, file,):
         print("DataFrame Feather dosyasını yazarken şu hata ile karşılaşıldı:", e)
 
 
-def save_data(df_hotel, df_review, file_hotel, file_yorum, root_folder= getcwd()):
-    if df_hotel is not None:
-        if exists(join(root_folder,file_hotel)):
-            df_saved_hotel = pd.read_feather(join(root_folder, file_hotel))
-            df_saved_hotel = pd.concat([df_saved_hotel, df_hotel], ignore_index=True, sort=False)
-        else:
-            df_saved_hotel = df_hotel
-
-        try:
-            df_saved_hotel.reset_index(inplace=True, drop=True)
-            print("Otel bilgileri kayıt ediliyor... ", end='')
-            df_saved_hotel.to_feather(join(root_folder, file_hotel))
-            print("Başarılı!")
-
-            df_saved_hotel = None
-        except Exception as e:
-            print("Otel bilgileri Feather dosyasını yazarken hata ile karşılaşıldı")
-            print(e)
-
-    if df_review is not None:
-        if exists(join(root_folder, file_yorum)):
-            df_saved_yorum = pd.read_feather(join(root_folder, file_yorum))
-            df_saved_yorum = pd.concat([df_saved_yorum, df_review], ignore_index=True, sort=False)
-        else:
-            df_saved_yorum = df_review
-
-        try:
-            df_saved_yorum.reset_index(inplace=True, drop=True)
-            print("Yorum bilgileri kayıt ediliyor... ", end='')
-            df_saved_yorum.to_feather(join(root_folder, file_yorum))
-            print("Başarılı!")
-
-            df_saved_yorum = None
-        except Exception as e:
-            print("Yorum bilgileri Feather dosyasını yazarken hata ile karşılaşıldı")
-            print(e)
-
-    gc.collect()
-    sleep(1)
-
-
 def write_last_index(index, file):
     if not exists(dirname(file)):
         makedirs(dirname(file))
