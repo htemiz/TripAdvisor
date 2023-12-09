@@ -203,7 +203,6 @@ def write_or_append_data(data, file,):
         makedirs(dirname(file))
 
     if exists(file):
-
         if ".feather" in file:
             df_saved_data = pd.read_feather(file)
         elif ".parquet" in file:
@@ -213,12 +212,13 @@ def write_or_append_data(data, file,):
 
     try:
         print("DataFrame kayıt ediliyor... ", end='')
-        df_saved_data.reset_index(inplace=True, drop=True)
+        data.reset_index(inplace=True, drop=True)
+        new_data = pd.concat([df_saved_data, data], ignore_index=True, sort=False)
 
         if ".feather" in file:
-            df_saved_data.to_feather(file)
+            new_data.to_feather(file)
         elif ".parquet" in file:
-            df_saved_data.to_parquet(file)
+            new_data.to_parquet(file)
 
         print("Başarılı!")
     except Exception as e:

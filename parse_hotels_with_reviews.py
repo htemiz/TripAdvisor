@@ -43,7 +43,7 @@ def main(data, region_name, download_dir ):
     file_last_index = join(download_dir, region_name + '_last_index.txt')
 
     first = True
-    df_review = df_hotel = None
+    # df_review = df_hotel = None
     n_periyot = 1
 
     ntotal= len(data)
@@ -81,28 +81,28 @@ def main(data, region_name, download_dir ):
         reviews = parse_reviews(driver, hotel_id, url)
         sleep(.5)
 
-        if first:
-            df_hotel = pd.DataFrame.from_records(hotel_data, columns=hotel_data.keys(), index=[0])
-            if reviews is not None:
-                df_review = reviews
-            first = False
-        else:
-            df_hotel = df_hotel.append( hotel_data, ignore_index=True)
-            if reviews is not None:
-                if df_review is not None:
-                    df_review = pd.concat([df_review, reviews], ignore_index=True, sort=False)
-                else:
-                    df_review = reviews
+        # if first:
+        #     df_hotel = pd.DataFrame.from_records(hotel_data, columns=hotel_data.keys(), index=[0])
+        #     if reviews is not None:
+        #         df_review = reviews
+        #     first = False
+        # else:
+        #     df_hotel = df_hotel.append( hotel_data, ignore_index=True)
+        #     if reviews is not None:
+        #         if df_review is not None:
+        #             df_review = pd.concat([df_review, reviews], ignore_index=True, sort=False)
+        #         else:
+        #             df_review = reviews
 
         if count % n_periyot == 0:  # her n_periyot adet otelde bir kayıt yap
             driver.close()
             sleep(.5)
-            write_or_append_data(df_hotel, file_hotel)
-            write_or_append_data(df_review, file_yorum)
+            write_or_append_data(hotel_data, file_hotel)
+            write_or_append_data(reviews, file_yorum)
 
-            first = True
-            df_hotel = None
-            df_review = None
+            # first = True
+            # df_hotel = None
+            # df_review = None
 
             gc.collect()
         update_config(file_path='config/configuration.json', path=["last_index"], new_value=count+1) # count + 1, to start with next hotel in next time
