@@ -222,7 +222,7 @@ def write_or_append_data(data, file,):
 
         print("Başarılı!")
     except Exception as e:
-        print("DataFrame Feather dosyasını yazarken şu hata ile karşılaşıldı:", e)
+        print("DataFrame dosyasını yazarken şu hata ile karşılaşıldı:", e)
 
 
 def write_last_index(index, file):

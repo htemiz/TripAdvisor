@@ -76,6 +76,7 @@ def main(data, region_name, download_dir ):
         if count % n_periyot == 0:  # her n_periyot adet otelde bir kayıt yap
             driver.close()
             sleep(.5)
+            hotel_data = pd.DataFrame.from_records(hotel_data, columns=hotel_data.keys(), index=[0])
             write_or_append_data(hotel_data, file_hotel)
             if reviews is not None:
                 write_or_append_data(reviews, file_yorum)
