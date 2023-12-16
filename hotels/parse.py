@@ -6,10 +6,8 @@ from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 
 
-def get_hotel_information(region_id, hotel_id, driver, url):
+def get_hotel_information(region_id, hotel_id, driver, ):
     hotel_data = dict()
-
-    open_page(driver, url)
     # sleep_a_while(sleep_min=sleep_min / 2, sleep_max=sleep_max / 2)  # better to sleep a while
 
     hotel_data['RegionID'] = region_id

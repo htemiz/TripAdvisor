@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 
 
 
-def dil_secenekleri_divini_ver(driver, url ):
+def dil_secenekleri_divini_ver(driver, ):
     """
     'Diğer' metinli divi verir ya da dillerin listelendiği <ul> nesnesini verir.
     Yorumlar çok az dilde ise 'Diğer' divi bulunmaz. Bu durumda, dillerin bulunduğu <ul> elemanından yararlanarak

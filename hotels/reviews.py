@@ -5,28 +5,18 @@ from bs4 import BeautifulSoup
 from .helpers import *
 from utils.utils import get_element, open_page
 
-def parse_reviews(driver, hotel_id, url):
+def parse_reviews(driver, hotel_id,):
     df = pd.DataFrame()
     hosgeldiniz_penceresini_kapat(driver)
     click_and_press_esc(driver) # arada pop-up falan çıkarsa diye
     click_accept_button(driver)
 
-    div_diger_diller, ul_diller = dil_secenekleri_divini_ver(driver, url )
-
-    # try again
-    if div_diger_diller is None and ul_diller is None:
-        sleep_a_while(sleep_min=sleep_min/2, sleep_max=sleep_max /2)  # better to sleep a while
-        open_page(driver, url)
-        sleep_a_while(sleep_min=sleep_min, sleep_max=sleep_max)  # better to sleep a while
-        hosgeldiniz_penceresini_kapat(driver)
-        click_and_press_esc(driver)  # arada pop-up falan çıkarsa diye
-        click_accept_button(driver)
-        div_diger_diller, ul_diller = dil_secenekleri_divini_ver(driver, url )
+    div_diger_diller, ul_diller = dil_secenekleri_divini_ver(driver, )
 
     if div_diger_diller is None and ul_diller is None:
         print('\nDillerle ilgili hiçbir bilgi bulunamadı. Muhtemelen bu otelin yorum bilgilerine erişilemiyor.'
               'Bu otel geçilecek...\n')
-        return None
+        return -1
 
     click_and_press_esc(driver) # arada pop-up falan çıkarsa diye
     text_diller_listesi = dilleri_listele(driver, div_diger_diller, ul_diller) # div_diger_diller, None ise hata yapacak ve devam etmeyecek
@@ -40,7 +30,7 @@ def parse_reviews(driver, hotel_id, url):
     for text_dil in text_diller_listesi:
 
         click_and_press_esc(driver)  # arada pop-up falan çıkarsa diye
-        div_diger_diller, ul_diller = dil_secenekleri_divini_ver(driver, url) # diğer diller divi
+        div_diger_diller, ul_diller = dil_secenekleri_divini_ver(driver,) # diğer diller divi
 
         driver.execute_script("arguments[0].scrollIntoView();", driver.find_element(By.TAG_NAME, 'body'))
         sleep_a_while(sleep_min=sleep_min/2, sleep_max=sleep_max /2)  # better to sleep a while
