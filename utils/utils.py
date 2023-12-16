@@ -64,22 +64,30 @@ def makine_cevirisini_kapat(driver):
     except:
         pass
 
-def get_browser(chromedriver_path, download_dir, prompt=False, upgrade=True):
-    chrome_options = webdriver.ChromeOptions()
-    service = Service(executable_path=chromedriver_path)
-    
-    preferences = {"download.prompt_for_download": prompt,
-                   "download.default_directory": download_dir,
-                   "download.directory_upgrade": upgrade,
-                   "profile.default_content_settings.popups":1,
-                   "profile.default_content_setting_values.notifications": 2,
-                   "profile.default_content_setting_values.automatic_downloads": 1,
-                   }
+def get_browser(chromedriver_path, download_dir, prompt=False, upgrade=True, ntry=1):
+    try:
+        chrome_options = webdriver.ChromeOptions()
+        service = Service(executable_path=chromedriver_path)
 
-    chrome_options.add_experimental_option("prefs", preferences)
-    driver = webdriver.Chrome(service=service,
-                              options=chrome_options)
-    return driver
+        preferences = {"download.prompt_for_download": prompt,
+                       "download.default_directory": download_dir,
+                       "download.directory_upgrade": upgrade,
+                       "profile.default_content_settings.popups":1,
+                       "profile.default_content_setting_values.notifications": 2,
+                       "profile.default_content_setting_values.automatic_downloads": 1,
+                       }
+
+        chrome_options.add_experimental_option("prefs", preferences)
+        driver = webdriver.Chrome(service=service,
+                                  options=chrome_options)
+        return driver
+    except Exception as e:
+        print('Browser oluşturulurken şu hata ile karşılaşıldı:', e)
+        if ntry <=3:
+            print(f'Browser tekrar oluşturulmaya çalışılıyor... Deneme ({ntry})')
+            return get_browser(chromedriver_path, download_dir, prompt=False, upgrade=True, ntry=ntry+1)
+        else:
+            return None
 
 
 def get_element(driver, name, by='class'):
@@ -195,7 +203,6 @@ def write_or_append_data(data, file,):
         makedirs(dirname(file))
 
     if exists(file):
-
         if ".feather" in file:
             df_saved_data = pd.read_feather(file)
         elif ".parquet" in file:
@@ -205,58 +212,17 @@ def write_or_append_data(data, file,):
 
     try:
         print("DataFrame kayıt ediliyor... ", end='')
-        df_saved_data.reset_index(inplace=True, drop=True)
+        data.reset_index(inplace=True, drop=True)
+        new_data = pd.concat([df_saved_data, data], ignore_index=True, sort=False)
 
         if ".feather" in file:
-            df_saved_data.to_feather(file)
+            new_data.to_feather(file)
         elif ".parquet" in file:
-            df_saved_data.to_parquet(file)
+            new_data.to_parquet(file)
 
         print("Başarılı!")
     except Exception as e:
-        print("DataFrame Feather dosyasını yazarken hata ile karşılaşıldı. Hata şuydu:", e)
-
-
-
-def save_data(df_hotel, df_review, file_hotel, file_yorum, root_folder= getcwd()):
-    if df_hotel is not None:
-        if exists(join(root_folder,file_hotel)):
-            df_saved_hotel = pd.read_feather(join(root_folder, file_hotel))
-            df_saved_hotel = pd.concat([df_saved_hotel, df_hotel], ignore_index=True, sort=False)
-        else:
-            df_saved_hotel = df_hotel
-
-        try:
-            df_saved_hotel.reset_index(inplace=True, drop=True)
-            print("Otel bilgileri kayıt ediliyor... ", end='')
-            df_saved_hotel.to_feather(join(root_folder, file_hotel))
-            print("Başarılı!")
-
-            df_saved_hotel = None
-        except Exception as e:
-            print("Otel bilgileri Feather dosyasını yazarken hata ile karşılaşıldı")
-            print(e)
-
-    if df_review is not None:
-        if exists(join(root_folder, file_yorum)):
-            df_saved_yorum = pd.read_feather(join(root_folder, file_yorum))
-            df_saved_yorum = pd.concat([df_saved_yorum, df_review], ignore_index=True, sort=False)
-        else:
-            df_saved_yorum = df_review
-
-        try:
-            df_saved_yorum.reset_index(inplace=True, drop=True)
-            print("Yorum bilgileri kayıt ediliyor... ", end='')
-            df_saved_yorum.to_feather(join(root_folder, file_yorum))
-            print("Başarılı!")
-
-            df_saved_yorum = None
-        except Exception as e:
-            print("Yorum bilgileri Feather dosyasını yazarken hata ile karşılaşıldı")
-            print(e)
-
-    gc.collect()
-    sleep(1)
+        print("DataFrame dosyasını yazarken şu hata ile karşılaşıldı:", e)
 
 
 def write_last_index(index, file):
