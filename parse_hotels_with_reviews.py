@@ -84,7 +84,7 @@ def main(data, region_name, download_dir ):
             continue
 
         reviews = parse_reviews(driver, hotel_id,)
-        if reviews == -1: # diller divini alırken bir hata ile karşılaşıldı. Tekrar deneyelim
+        if reviews is None: # diller divini alırken bir hata ile karşılaşıldı. Tekrar deneyelim
             open_page(driver, url)
             hosgeldiniz_penceresini_kapat(driver)
             click_and_press_esc(driver)  # arada pop-up falan çıkarsa diye

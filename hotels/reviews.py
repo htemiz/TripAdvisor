@@ -16,7 +16,7 @@ def parse_reviews(driver, hotel_id,):
     if div_diger_diller is None and ul_diller is None:
         print('\nDillerle ilgili hiçbir bilgi bulunamadı. Muhtemelen bu otelin yorum bilgilerine erişilemiyor.'
               'Bu otel geçilecek...\n')
-        return -1
+        return None
 
     click_and_press_esc(driver) # arada pop-up falan çıkarsa diye
     text_diller_listesi = dilleri_listele(driver, div_diger_diller, ul_diller) # div_diger_diller, None ise hata yapacak ve devam etmeyecek
