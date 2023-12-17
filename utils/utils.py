@@ -161,6 +161,18 @@ def open_page(driver, url):
     sleep_a_while(sleep_min=sleep_min , sleep_max=sleep_max )  # better to sleep a while
     click_and_press_esc(driver)
 
+def captcha_asked(driver):
+    div_captcha = None
+    try:
+        div_captcha = driver.find_element(By.ID, 'captcha-container')
+    except Exception as e:
+        pass
+
+    if div_captcha is None:
+        return False
+    else:
+        return True
+
 
 def read_more_butonuna_bas(driver):
     # read more butonuna basalım ki tüm yorumların textlerinin tamamı görünür olsu.

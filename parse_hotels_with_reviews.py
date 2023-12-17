@@ -58,6 +58,12 @@ def main(data, region_name, download_dir ):
         driver = get_browser(chromedriver_path, download_dir)
         driver.set_window_size(width, height)
         open_page(driver, url)
+
+        n_try_captcha = 1
+        while captcha_asked(driver) and n_try_captcha <3:
+            sleep_a_while(sleep_min * n_try_captcha *10, sleep_max * n_try_captcha *10)
+            open_page(driver, url)
+
         hotel_data = get_hotel_information(region_id, hotel_id, driver,)
         # bazen insan olduğumuz doğrulanmak isteniyor. Aradığımız sayfa yerine
         # başka bir sayfa açıldığından, yeni browser ile yeniden deniyoruz
