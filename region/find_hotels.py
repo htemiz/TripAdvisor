@@ -18,7 +18,7 @@ def get_hotels_of_region(driver, region_id, region_name, download_dir, page='oa3
         download_dir = abspath(join(download_dir + region_name))
 
     region_url = "https://www.tripadvisor.com.tr/Hotels-g" + region_id + "-"
-    file_hotels = join(download_dir, "Hotels_in_" + region_name + "_Region.feather")
+    file_hotels = join(download_dir, "Hotels_in_" + region_name + "_Region.parquet")
     file_last_index = join(download_dir, region_name + '_last_index.txt')
 
     # return
