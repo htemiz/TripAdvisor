@@ -32,5 +32,5 @@ if __name__ == "__main__":
     driver = get_browser(chromedriver_path, download_dir)
 
     get_hotels_of_region(driver, region_id, region_name, download_dir, star=5,
-                                   page='oa2850', sleep_min=4, sleep_max=5 )
+                                   page='oa30', sleep_min=4, sleep_max=5 )
 

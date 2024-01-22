@@ -77,7 +77,12 @@ def dilleri_listele(driver, div_diller, ul_diller ):
             click_accept_button(driver)
             div_diller.click() #
 
-        div_menu_diller = driver.find_element(By.CLASS_NAME, 'TocEc')
+        try:
+            div_menu_diller = driver.find_element(By.CLASS_NAME, 'TocEc')
+        except Exception as  ex:
+            print('\nDiller Menüsü bulunamadı. Hata şuydu:\n', ex, '\n\n')
+            return None
+
         diller = div_menu_diller.find_elements(By.TAG_NAME, 'li')[1:] # ilki tüm diller seçeneğidir.
         # text_diller_listesi = [dil.text.split(' ')[0] for dil in diller if 'İngilizce' not in dil.text] #ingilizceyi çıkar
         diller = [x for x in diller if '(0)' not in x.text] # yorumu olmayan dilleri alma
