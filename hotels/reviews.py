@@ -32,6 +32,7 @@ def parse_reviews(driver, hotel_id,):
         click_and_press_esc(driver)  # arada pop-up falan çıkarsa diye
         div_diger_diller, ul_diller = dil_secenekleri_divini_ver(driver,) # diğer diller divi
 
+        click_and_press_esc(driver)  # arada pop-up falan çıkarsa diye
         driver.execute_script("arguments[0].scrollIntoView();", driver.find_element(By.TAG_NAME, 'body'))
         sleep_a_while(sleep_min=sleep_min/2, sleep_max=sleep_max /2)  # better to sleep a while
         click_and_press_esc(driver)  # arada pop-up falan çıkarsa diye
