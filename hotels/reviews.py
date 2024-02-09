@@ -11,15 +11,15 @@ def parse_reviews(driver, hotel_id,):
     click_and_press_esc(driver) # arada pop-up falan çıkarsa diye
     click_accept_button(driver)
 
-    div_diger_diller, ul_diller = dil_secenekleri_divini_ver(driver, )
+    btn_diger_diller, ul_diller = dil_secenekleri_divini_ver(driver, )
 
-    if div_diger_diller is None and ul_diller is None:
+    if btn_diger_diller is None and ul_diller is None:
         print('\nDillerle ilgili hiçbir bilgi bulunamadı. Muhtemelen bu otelin yorum bilgilerine erişilemiyor.'
               'Bu otel geçilecek...\n')
         return None
 
     click_and_press_esc(driver) # arada pop-up falan çıkarsa diye
-    text_diller_listesi = dilleri_listele(driver, div_diger_diller, ul_diller) # div_diger_diller, None ise hata yapacak ve devam etmeyecek
+    text_diller_listesi = dilleri_listele(driver, btn_diger_diller, ul_diller) # div_diger_diller, None ise hata yapacak ve devam etmeyecek
     #bir şekilde, dil_secenekleri_divini_ver fonksiyonu bu divi bazen bulamıyor. Bulamadığında None olacağı için
     # dilleri_listele fonksiyonunda hata ile karşılaşılıyor. kasıtlı olarak bu fonksiyonda bu hata meydana gelirse
     #bu otelden yeniden deva metmek üzere işin yarıda kesilmesini istiyorum.
@@ -30,7 +30,7 @@ def parse_reviews(driver, hotel_id,):
     for text_dil in text_diller_listesi:
 
         click_and_press_esc(driver)  # arada pop-up falan çıkarsa diye
-        div_diger_diller, ul_diller = dil_secenekleri_divini_ver(driver,) # diğer diller divi
+        btn_diger_diller, ul_diller = dil_secenekleri_divini_ver(driver,) # diğer diller butonu
 
         click_and_press_esc(driver)  # arada pop-up falan çıkarsa diye
 
@@ -49,7 +49,7 @@ def parse_reviews(driver, hotel_id,):
         click_and_press_esc(driver)  # arada pop-up falan çıkarsa diye
         sleep_a_while(sleep_min=sleep_min /2, sleep_max=sleep_max /2)  # better to sleep a while
         click_and_press_esc(driver)  # arada pop-up falan çıkarsa diye
-        if not dili_sec(driver, div_diger_diller, ul_diller, text_dil):
+        if not dili_sec(driver, btn_diger_diller, ul_diller, text_dil):
             print('dil bulunamadı!', text_dil)
             continue
         print('[', text_dil, ']')

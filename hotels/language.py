@@ -18,19 +18,19 @@ def dil_secenekleri_divini_ver(driver, ):
     try:
         click_and_press_esc(driver)
         sleep_a_while(sleep_min=sleep_min*1.5, sleep_max=sleep_max*1.5)  # better to sleep a while
-
-        div_rev_filters = get_element(driver, 'hrReviewFilters', by='id')
-        sleep_a_while(sleep_min=sleep_min, sleep_max=sleep_max)  # better to sleep a while
-        column_dil = div_rev_filters.find_elements(By.CLASS_NAME, 'ui_column')[-1]
-        ul_dil = column_dil.find_element(By.TAG_NAME,'ul')
+        div_rev_filters = get_element(driver, 'hrReviewFilters', by='id') # bu div yoksa hiç yorum yok muhtemelen
         try:
-            div = ul_dil.find_element(By.TAG_NAME, 'div')  # 'Diğer' metnin yazıldığı div
-        # span_diger = div.find_element(By.TAG_NAME, 'span')
-            return div, None
+            ul_diller =None
+            ilk_yavru_div = div_rev_filters.find_element(By.CSS_SELECTOR, 'div:first-child')
+            div_diller = ilk_yavru_div.find_element(By.CSS_SELECTOR, "div:nth-child(4)")
+            ul_diller = div_diller.find_element(By.CSS_SELECTOR, "ul")
+            btn_diger =  div_diller.find_element(By.CSS_SELECTOR, "button")
+
+            return btn_diger, ul_diller
         except Exception as ex:
             # print('Dil seçenekleri divi bulunamadı. Muhtemelen az sayıda dilde yorum var. Dillerin olduğu <ul> nesnesi '
             #       'döndürülecek ve div_diger ise None değerine sahip olacak')
-            return None, ul_dil
+            return None, ul_diller
 
     except Exception as ex:
         # print('Dil seçenekleri divi ve diller kısmı bulunamadı. didiger ve ul elemanı None olarak döndürülecek')
@@ -59,23 +59,23 @@ def dil_secenekleri_divini_ver(driver, ):
 
 
 
-def dilleri_listele(driver, div_diller, ul_diller ):
+def dilleri_listele(driver, btn_diller, ul_diller):
     # driver.execute_script("arguments[0].scrollIntoView();", div_diller)
     # move_mouse_to_element(driver, div_diller)
     sleep_a_while(sleep_min=sleep_min, sleep_max=sleep_max)  # better to sleep a while
 
-    if div_diller is not None: # 'Diğer' menti bulunan div var ise
+    if btn_diller is not None: # 'Diğer' menti bulunan div var ise
 
         # bazen gizlilik kabulü gibi mesajlar, pop-up'lar çıktığı için
         # div e tıklanamıyor. engellemek için
         try:
-            div_diller.click()
+            btn_diller.click()
 
         except:
             sleep_a_while(sleep_min=sleep_min /2, sleep_max=sleep_max/2)
             click_and_press_esc(driver)
             click_accept_button(driver)
-            div_diller.click() #
+            btn_diller.click() #
 
         try:
             div_menu_diller = driver.find_element(By.CLASS_NAME, 'TocEc')
